@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kannada Voice Test - SamGov</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Kannada", sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f8fafc;
+    }
+    h1 { color: #0f766e; }
+    .test-section {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .status {
+      padding: 12px;
+      border-radius: 8px;
+      margin: 10px 0;
+      font-weight: 500;
+    }
+    .status.success { background: #d1fae5; color: #065f46; }
+    .status.error { background: #fee2e2; color: #991b1b; }
+    .status.warning { background: #fef3c7; color: #92400e; }
+    .status.info { background: #e0f2fe; color: #0369a1; }
+    button {
+      background: #0d9488;
+      color: white;
+      border: none;
+      padding: 16px 24px;
+      border-radius: 12px;
+      font-size: 18px;
+      cursor: pointer;
+      width: 100%;
+      margin: 10px 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    button:hover { background: #0f766e; }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    button.recording { background: #dc2626; animation: pulse 1s infinite; }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .transcript {
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 16px;
+      min-height: 100px;
+      margin: 10px 0;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    .transcript.kannada {
+      font-family: "Noto Sans Kannada", sans-serif;
+      font-size: 22px;
+    }
+    .lang-toggle {
+      display: flex;
+      gap: 10px;
+      margin: 10px 0;
+    }
+    .lang-toggle button {
+      flex: 1;
+      padding: 12px;
+      font-size: 16px;
+    }
+    .lang-toggle button.active {
+      background: #0f766e;
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.3);
+    }
+    .lang-toggle button:not(.active) {
+      background: #64748b;
+    }
+    code {
+      background: #e2e8f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    th { color: #64748b; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <h1>🎤 Kannada Voice Test</h1>
+  <p>Testing Web Speech API support for Kannada (kn-IN) on your device.</p>
+
+  <!-- Test 1: API Support -->
+  <div class="test-section">
+    <h2>Test 1: Web Speech API Support</h2>
+    <div id="api-support"></div>
+  </div>
+
+  <!-- Test 2: Available Languages -->
+  <div class="test-section">
+    <h2>Test 2: Voice Recognition Languages</h2>
+    <div id="languages-support"></div>
+  </div>
+
+  <!-- Test 3: Live Recognition -->
+  <div class="test-section">
+    <h2>Test 3: Live Voice Recognition</h2>
+
+    <div class="lang-toggle">
+      <button id="btn-en" class="active" onclick="setLanguage('en-IN')">English</button>
+      <button id="btn-kn" onclick="setLanguage('kn-IN')">ಕನ್ನಡ (Kannada)</button>
+    </div>
+
+    <button id="mic-btn" onclick="toggleRecording()">
+      <span id="mic-icon">🎤</span>
+      <span id="mic-text">Tap to Speak</span>
+    </button>
+
+    <div class="transcript" id="transcript">
+      <em style="color: #94a3b8;">Your speech will appear here...</em>
+    </div>
+
+    <div id="recognition-status"></div>
+  </div>
+
+  <!-- Test 4: TTS Support -->
+  <div class="test-section">
+    <h2>Test 4: Text-to-Speech Voices</h2>
+    <div id="tts-voices"></div>
+    <button onclick="testTTS()" style="margin-top: 10px;">
+      🔊 Test Kannada TTS
+    </button>
+  </div>
+
+  <!-- Summary -->
+  <div class="test-section">
+    <h2>📊 Summary for SamGov</h2>
+    <div id="summary"></div>
+  </div>
+
+  <script>
+    let recognition = null;
+    let isRecording = false;
+    let currentLang = 'en-IN';
+    let kannadaSTTSupported = false;
+    let kannadaTTSSupported = false;
+
+    // Test 1: Check API Support
+    function checkAPISupport() {
+      const container = document.getElementById('api-support');
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+      if (SpeechRecognition) {
+        container.innerHTML = `
+          <div class="status success">✅ Web Speech API is SUPPORTED</div>
+          <table>
+            <tr><th>Browser</th><td>${navigator.userAgent.split(' ').slice(-2).join(' ')}</td></tr>
+            <tr><th>API</th><td>${window.SpeechRecognition ? 'Standard' : 'webkit (Chrome)'}</td></tr>
+          </table>
+        `;
+        return true;
+      } else {
+        container.innerHTML = `
+          <div class="status error">❌ Web Speech API NOT supported</div>
+          <p>Try using Chrome or Edge browser.</p>
+        `;
+        return false;
+      }
+    }
+
+    // Test 2: Check Languages (best effort - API doesn't expose language list)
+    function checkLanguages() {
+      const container = document.getElementById('languages-support');
+
+      // We can't directly query supported languages, so we test by attempting recognition
+      container.innerHTML = `
+        <div class="status info">ℹ️ Language support varies by device</div>
+        <p>Chrome uses Google's servers for recognition. According to Google's documentation:</p>
+        <table>
+          <tr><th>Language</th><th>Code</th><th>Expected Support</th></tr>
+          <tr><td>English (India)</td><td><code>en-IN</code></td><td>✅ Yes</td></tr>
+          <tr><td>Kannada</td><td><code>kn-IN</code></td><td>✅ Yes (online)</td></tr>
+          <tr><td>Hindi</td><td><code>hi-IN</code></td><td>✅ Yes</td></tr>
+          <tr><td>Tamil</td><td><code>ta-IN</code></td><td>✅ Yes</td></tr>
+          <tr><td>Telugu</td><td><code>te-IN</code></td><td>✅ Yes</td></tr>
+        </table>
+        <p><strong>Note:</strong> Requires internet connection (audio sent to Google servers).</p>
+      `;
+    }
+
+    // Test 3: Live Recognition
+    function setLanguage(lang) {
+      currentLang = lang;
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en-IN');
+      document.getElementById('btn-kn').classList.toggle('active', lang === 'kn-IN');
+
+      if (isRecording) {
+        stopRecording();
+      }
+    }
+
+    function toggleRecording() {
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    }
+
+    function startRecording() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) return;
+
+      recognition = new SpeechRecognition();
+      recognition.lang = currentLang;
+      recognition.continuous = true;
+      recognition.interimResults = true;
+
+      const btn = document.getElementById('mic-btn');
+      const text = document.getElementById('mic-text');
+      const transcript = document.getElementById('transcript');
+      const status = document.getElementById('recognition-status');
+
+      recognition.onstart = () => {
+        isRecording = true;
+        btn.classList.add('recording');
+        text.textContent = 'Listening... Tap to stop';
+        transcript.innerHTML = '<em style="color: #94a3b8;">Listening...</em>';
+        transcript.classList.toggle('kannada', currentLang === 'kn-IN');
+        status.innerHTML = `<div class="status info">🎤 Recording in ${currentLang === 'kn-IN' ? 'Kannada' : 'English'}...</div>`;
+      };
+
+      recognition.onresult = (event) => {
+        let finalTranscript = '';
+        let interimTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const result = event.results[i];
+          if (result.isFinal) {
+            finalTranscript += result[0].transcript;
+          } else {
+            interimTranscript += result[0].transcript;
+          }
+        }
+
+        transcript.innerHTML = finalTranscript +
+          (interimTranscript ? `<span style="color: #94a3b8;">${interimTranscript}</span>` : '');
+
+        if (finalTranscript && currentLang === 'kn-IN') {
+          kannadaSTTSupported = true;
+          status.innerHTML = `<div class="status success">✅ Kannada recognition WORKING!</div>`;
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Recognition error:', event.error);
+        status.innerHTML = `<div class="status error">❌ Error: ${event.error}</div>`;
+
+        if (event.error === 'language-not-supported') {
+          status.innerHTML += `<p>Kannada may not be supported on this device/browser.</p>`;
+        } else if (event.error === 'network') {
+          status.innerHTML += `<p>Network error - Web Speech API requires internet connection.</p>`;
+        }
+
+        stopRecording();
+      };
+
+      recognition.onend = () => {
+        if (isRecording) {
+          // Restart if still supposed to be recording
+          recognition.start();
+        }
+      };
+
+      try {
+        recognition.start();
+      } catch (e) {
+        status.innerHTML = `<div class="status error">❌ Failed to start: ${e.message}</div>`;
+      }
+    }
+
+    function stopRecording() {
+      isRecording = false;
+      if (recognition) {
+        recognition.stop();
+      }
+
+      const btn = document.getElementById('mic-btn');
+      const text = document.getElementById('mic-text');
+
+      btn.classList.remove('recording');
+      text.textContent = 'Tap to Speak';
+
+      updateSummary();
+    }
+
+    // Test 4: TTS Voices
+    function checkTTSVoices() {
+      const container = document.getElementById('tts-voices');
+
+      if (!('speechSynthesis' in window)) {
+        container.innerHTML = `<div class="status error">❌ Text-to-Speech NOT supported</div>`;
+        return;
+      }
+
+      // Voices load asynchronously
+      function populateVoices() {
+        const voices = speechSynthesis.getVoices();
+        const indianVoices = voices.filter(v =>
+          v.lang.includes('IN') ||
+          v.lang.includes('kn') ||
+          v.lang.includes('hi') ||
+          v.lang.includes('ta') ||
+          v.lang.includes('te')
+        );
+
+        const kannadaVoices = voices.filter(v => v.lang.includes('kn'));
+        kannadaTTSSupported = kannadaVoices.length > 0;
+
+        let html = `<div class="status ${kannadaTTSSupported ? 'success' : 'warning'}">
+          ${kannadaTTSSupported ? '✅' : '⚠️'} ${kannadaVoices.length} Kannada voice(s) found
+        </div>`;
+
+        if (indianVoices.length > 0) {
+          html += `<table>
+            <tr><th>Voice</th><th>Language</th></tr>
+            ${indianVoices.slice(0, 10).map(v => `
+              <tr>
+                <td>${v.name}</td>
+                <td><code>${v.lang}</code></td>
+              </tr>
+            `).join('')}
+          </table>`;
+        } else {
+          html += `<p>No Indian language voices found. Install language packs in your OS settings.</p>`;
+        }
+
+        container.innerHTML = html;
+        updateSummary();
+      }
+
+      speechSynthesis.onvoiceschanged = populateVoices;
+      populateVoices();
+    }
+
+    function testTTS() {
+      const voices = speechSynthesis.getVoices();
+      const kannadaVoice = voices.find(v => v.lang.includes('kn'));
+
+      const utterance = new SpeechSynthesisUtterance();
+      utterance.text = kannadaVoice ? 'ನಮಸ್ಕಾರ, ಸ್ಯಾಮ್‌ಗೋವ್‌ಗೆ ಸ್ವಾಗತ' : 'Hello, welcome to SamGov';
+      utterance.lang = kannadaVoice ? 'kn-IN' : 'en-IN';
+      if (kannadaVoice) utterance.voice = kannadaVoice;
+
+      speechSynthesis.speak(utterance);
+    }
+
+    // Summary
+    function updateSummary() {
+      const container = document.getElementById('summary');
+
+      const apiSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+
+      container.innerHTML = `
+        <table>
+          <tr>
+            <th>Feature</th>
+            <th>Status</th>
+            <th>Recommendation</th>
+          </tr>
+          <tr>
+            <td>Web Speech API</td>
+            <td>${apiSupported ? '✅ Yes' : '❌ No'}</td>
+            <td>${apiSupported ? 'Use as primary' : 'Need fallback'}</td>
+          </tr>
+          <tr>
+            <td>Kannada STT</td>
+            <td>${kannadaSTTSupported ? '✅ Verified' : '⏳ Test above'}</td>
+            <td>${kannadaSTTSupported ? 'Web Speech API works!' : 'Test with mic button'}</td>
+          </tr>
+          <tr>
+            <td>Kannada TTS</td>
+            <td>${kannadaTTSSupported ? '✅ Yes' : '⚠️ Limited'}</td>
+            <td>${kannadaTTSSupported ? 'Use native' : 'Consider AI4Bharat TTS'}</td>
+          </tr>
+        </table>
+
+        <div class="status ${kannadaSTTSupported ? 'success' : 'info'}" style="margin-top: 16px;">
+          <strong>For SamGov:</strong><br>
+          ${kannadaSTTSupported
+            ? '✅ Web Speech API with kn-IN works on this device. Use as primary, Whisper.cpp WASM as fallback.'
+            : 'Test Kannada speech recognition above to verify support on your device.'}
+        </div>
+      `;
+    }
+
+    // Run tests on load
+    window.onload = () => {
+      checkAPISupport();
+      checkLanguages();
+      checkTTSVoices();
+      updateSummary();
+    };
+  </script>
+</body>
+</html>
