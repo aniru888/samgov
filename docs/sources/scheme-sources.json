@@ -1,0 +1,370 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Karnataka Welfare Scheme Source Documentation",
+  "description": "Verified sources for scheme eligibility criteria. All data for GUIDANCE ONLY.",
+  "last_verified": "2026-02-04",
+  "schemes": {
+    "gruha-lakshmi": {
+      "name": "Gruha Lakshmi",
+      "department": "Women and Child Development",
+      "official_sources": [
+        {
+          "type": "department_page",
+          "url": "https://dwcd.karnataka.gov.in/info-2/GRUHALAKSHMI+SCHEME/en",
+          "title": "Gruha Lakshmi - WCD Karnataka Official",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "scheme_guidelines",
+          "url": "https://dwcd.karnataka.gov.in/41/gruhalakshmi-scheme/en",
+          "title": "Gruhalakshmi Scheme & Stree Shakthi Guidelines",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "application_portal",
+          "url": "https://sevasindhuservices.karnataka.gov.in/",
+          "title": "Seva Sindhu Application Portal",
+          "last_accessed": "2026-02-04"
+        }
+      ],
+      "secondary_sources": [
+        {
+          "type": "third_party_guide",
+          "url": "https://cleartax.in/s/gruha-lakshmi-scheme-karnataka",
+          "title": "ClearTax - Gruha Lakshmi Eligibility Guide",
+          "last_accessed": "2026-02-04",
+          "used_for": ["eligibility_criteria", "documents_required", "exclusions"]
+        }
+      ],
+      "helpline": {
+        "phone": ["1902", "08147500500", "08277000555"],
+        "method": "SMS ration card number to helpline"
+      },
+      "eligibility_criteria_sources": {
+        "residency": "Official DWCD portal",
+        "gender": "Official DWCD portal - includes transgender",
+        "ration_card": "Official DWCD portal - Antyodaya/BPL/APL",
+        "income_limit": "ClearTax - ₹2 lakh/year family income",
+        "taxpayer_exclusion": "ClearTax - applicant or husband as taxpayer",
+        "govt_employee_exclusion": "ClearTax"
+      }
+    },
+    "anna-bhagya": {
+      "name": "Anna Bhagya",
+      "department": "Food and Civil Supplies",
+      "official_sources": [
+        {
+          "type": "department_portal",
+          "url": "https://ahara.kar.nic.in/",
+          "title": "Karnataka Food & Civil Supplies (Ahara)",
+          "last_accessed": "2026-02-04"
+        }
+      ],
+      "secondary_sources": [
+        {
+          "type": "third_party_guide",
+          "url": "https://cleartax.in/s/anna-bhagya-scheme",
+          "title": "ClearTax - Anna Bhagya Scheme Guide",
+          "last_accessed": "2026-02-04",
+          "used_for": ["eligibility_criteria", "benefits"]
+        },
+        {
+          "type": "government_schemes_portal",
+          "url": "https://www.govtschemes.in/karnataka-anna-bhagya-scheme",
+          "title": "GovtSchemes.in - Anna Bhagya Overview",
+          "last_accessed": "2026-02-04",
+          "used_for": ["ration_card_types", "automatic_eligibility"]
+        }
+      ],
+      "helpline": {
+        "phone": ["1967", "18004259339"],
+        "email": "foodcom-ka@nic.in"
+      },
+      "eligibility_criteria_sources": {
+        "ration_card": "Official Ahara portal - Antyodaya/PHH only",
+        "bpl_status": "GovtSchemes.in",
+        "no_application_needed": "ClearTax - auto-enrolled via ration card"
+      }
+    },
+    "shakti": {
+      "name": "Shakti",
+      "department": "Transport",
+      "official_sources": [
+        {
+          "type": "department_page",
+          "url": "https://yuvakanaja.karnataka.gov.in/591/shakti-yojana/en",
+          "title": "Yuva Kanaja - Shakti Yojana Official",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "ksrtc_portal",
+          "url": "https://shakti.ksrtc.in/",
+          "title": "KSRTC Shakti Portal",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "application_portal",
+          "url": "https://sevasindhuservices.karnataka.gov.in/",
+          "title": "Seva Sindhu - Shakti Smart Card Application",
+          "last_accessed": "2026-02-04"
+        }
+      ],
+      "secondary_sources": [
+        {
+          "type": "third_party_guide",
+          "url": "https://www.govtschemes.in/karnataka-shakti-scheme",
+          "title": "GovtSchemes.in - Shakti Scheme Details",
+          "last_accessed": "2026-02-04",
+          "used_for": ["age_limits", "bus_types", "rtc_corporations"]
+        },
+        {
+          "type": "scheme_guidelines_pdf",
+          "url": "https://www.scribd.com/document/684347950/Karnataka-Shakti-Scheme-Guidelines",
+          "title": "Karnataka Shakti Scheme Guidelines PDF",
+          "last_accessed": "2026-02-04",
+          "used_for": ["official_guidelines"]
+        }
+      ],
+      "helpline": {
+        "phone": ["1902", "080-4959-6666"],
+        "email": "sevasindhu@karnataka.gov.in"
+      },
+      "eligibility_criteria_sources": {
+        "gender": "Official Yuva Kanaja - women and transgender",
+        "age": "GovtSchemes.in - 6+ years",
+        "residency": "Official Yuva Kanaja - Karnataka address proof",
+        "bus_restrictions": "GovtSchemes.in - non-AC buses only",
+        "rtc_employee_exclusion": "GovtSchemes.in"
+      }
+    },
+    "yuva-nidhi": {
+      "name": "Yuva Nidhi",
+      "department": "Skill Development, Entrepreneurship and Livelihood",
+      "official_sources": [
+        {
+          "type": "department_page",
+          "url": "https://kaushalya.karnataka.gov.in/21/yuvanidhi-scheme/en",
+          "title": "Kaushalya Karnataka - Yuva Nidhi Scheme Official",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "eligibility_checker",
+          "url": "https://ceg.karnataka.gov.in/Blog/public/details/YuvaNidhi/en",
+          "title": "Karnataka CEG - Yuva Nidhi Eligibility Checker",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "application_portal",
+          "url": "https://sevasindhuservices.karnataka.gov.in/directApply.do?serviceId=2079",
+          "title": "Seva Sindhu - Direct Yuva Nidhi Application",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "rti_documents",
+          "url": "https://kaushalya.karnataka.gov.in/uploads/media_to_upload1654077894.pdf",
+          "title": "RTI 4(1)A Filing - Department Structure",
+          "last_accessed": "2026-02-04"
+        }
+      ],
+      "secondary_sources": [
+        {
+          "type": "wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Yuva_Nidhi",
+          "title": "Wikipedia - Yuva Nidhi",
+          "last_accessed": "2026-02-04",
+          "used_for": ["scheme_overview", "launch_date"]
+        },
+        {
+          "type": "third_party_guide",
+          "url": "https://cleartax.in/s/yuva-nidhi-scheme-karnataka",
+          "title": "ClearTax - Yuva Nidhi Eligibility Guide",
+          "last_accessed": "2026-02-04",
+          "used_for": ["detailed_eligibility", "exclusion_criteria"]
+        }
+      ],
+      "helpline": {
+        "phone": ["1800-599-9918", "1902"]
+      },
+      "eligibility_criteria_sources": {
+        "residency": "Official Kaushalya portal - Karnataka domicile",
+        "education_years": "ClearTax - 6+ years in Karnataka",
+        "graduation_year": "Official Kaushalya portal - 2022-23/2023-24",
+        "unemployment_period": "ClearTax - 6+ months",
+        "esi_pf_nps_exclusion": "ClearTax",
+        "higher_education_exclusion": "Official Kaushalya portal"
+      }
+    },
+    "sandhya-suraksha": {
+      "name": "Sandhya Suraksha",
+      "department": "Social Welfare",
+      "official_sources": [
+        {
+          "type": "department_page",
+          "url": "https://karunadu.karnataka.gov.in/welfareofdisabled/Pages/Senior-Citizen-Schemes.aspx",
+          "title": "Karnataka Social Welfare - Senior Citizen Schemes",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "application_portal",
+          "url": "https://sevasindhuservices.karnataka.gov.in/",
+          "title": "Seva Sindhu Application Portal",
+          "last_accessed": "2026-02-04"
+        }
+      ],
+      "secondary_sources": [
+        {
+          "type": "third_party_guide",
+          "url": "https://www.indiafilings.com/learn/sandhya-surksha-pension-scheme/",
+          "title": "IndiaFilings - Sandhya Suraksha Guide",
+          "last_accessed": "2026-02-04",
+          "used_for": ["eligibility_criteria", "documents_required", "income_limits"]
+        },
+        {
+          "type": "detailed_guide",
+          "url": "https://schemesandentitlements.org/public/books/making-entitlements-work/page/scheme-4-sandhya-suraksha-yojana",
+          "title": "Schemes & Entitlements - Sandhya Suraksha Details",
+          "last_accessed": "2026-02-04",
+          "used_for": ["unorganized_sector_requirement", "bank_balance_limit"]
+        }
+      ],
+      "eligibility_criteria_sources": {
+        "age": "IndiaFilings - 65+ years",
+        "income_limit": "IndiaFilings - ₹20,000/year combined",
+        "bank_balance": "IndiaFilings - ₹10,000 combined",
+        "unorganized_sector": "Schemes & Entitlements guide",
+        "pension_exclusion": "IndiaFilings - no existing pension"
+      }
+    },
+    "bhagya-lakshmi": {
+      "name": "Bhagya Lakshmi",
+      "department": "Women and Child Development",
+      "official_sources": [
+        {
+          "type": "scheme_portal",
+          "url": "https://blakshmi.kar.nic.in/",
+          "title": "Bhagya Lakshmi Official Portal",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "myscheme_page",
+          "url": "https://www.myscheme.gov.in/schemes/bys",
+          "title": "myScheme.gov.in - Bhagyalaxmi Scheme",
+          "last_accessed": "2026-02-04"
+        }
+      ],
+      "secondary_sources": [
+        {
+          "type": "third_party_guide",
+          "url": "https://cleartax.in/s/bhagyalakshmi-scheme-karnataka",
+          "title": "ClearTax - Bhagyalakshmi Scheme Guide",
+          "last_accessed": "2026-02-04",
+          "used_for": ["eligibility_criteria", "benefits", "documents_required"]
+        },
+        {
+          "type": "vikaspedia",
+          "url": "https://socialwelfare.vikaspedia.in/viewcontent/social-welfare/women-and-child-development/child-development-1/girl-child-welfare/state-wise-schemes-for-girl-child-welfare/bhagyalaxmi-scheme-of-karnataka?lgn=en",
+          "title": "Vikaspedia - Bhagyalakshmi Scheme Karnataka",
+          "last_accessed": "2026-02-04",
+          "used_for": ["scheme_overview", "bond_details"]
+        }
+      ],
+      "eligibility_criteria_sources": {
+        "bpl_status": "Official portal - BPL families only",
+        "birth_date": "ClearTax - after March 31, 2006",
+        "registration_window": "ClearTax - within 1 year of birth",
+        "sibling_limit": "ClearTax - max 2 girls per family",
+        "education_requirement": "ClearTax - complete 8th grade"
+      }
+    },
+    "vidyasiri": {
+      "name": "Vidyasiri Scholarship",
+      "department": "Backward Classes Welfare",
+      "official_sources": [
+        {
+          "type": "department_page",
+          "url": "https://bcwd.karnataka.gov.in/44/vidyasiri/en",
+          "title": "BCWD Karnataka - Vidyasiri Official",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "scholarship_info",
+          "url": "https://bcwd.karnataka.gov.in/info-2/Scholarships/Vidyasiri/en",
+          "title": "BCWD Karnataka - Vidyasiri Scholarship Info",
+          "last_accessed": "2026-02-04"
+        },
+        {
+          "type": "application_portal",
+          "url": "https://ssp.postmatric.karnataka.gov.in/",
+          "title": "SSP Post-Matric Scholarship Portal",
+          "last_accessed": "2026-02-04"
+        }
+      ],
+      "secondary_sources": [
+        {
+          "type": "third_party_guide",
+          "url": "https://www.collegesearch.in/articles/vidyasiri-scholarship",
+          "title": "CollegeSearch - Vidyasiri Scholarship Guide",
+          "last_accessed": "2026-02-04",
+          "used_for": ["application_process", "deadlines"]
+        }
+      ],
+      "helpline": {
+        "phone": ["8050770005"],
+        "email": "bcdbng@kar.nic.in",
+        "address": "No.16/D, 3rd Floor, Devraj Urs Bhavan, Millers Tank Bed Road, Vasanth Nagar, Bangalore – 560052"
+      },
+      "eligibility_criteria_sources": {
+        "category": "Official BCWD - SC/ST/OBC/Minority",
+        "income_limits": "Official BCWD - ₹1L (2A/3A/3B) or ₹2.5L (Cat-1)",
+        "distance": "Official BCWD - 5km from college",
+        "attendance": "Official BCWD - 75% minimum",
+        "marks": "Official BCWD - 55% Cat-1, 65% others",
+        "male_sibling_limit": "Official BCWD - max 2 males per family"
+      }
+    },
+    "raitha-shakti": {
+      "name": "Raitha Shakti",
+      "department": "Agriculture",
+      "official_sources": [
+        {
+          "type": "farmer_portal",
+          "url": "https://fruits.karnataka.gov.in/",
+          "title": "FRUITS Portal - Farmer Registration",
+          "last_accessed": "2026-02-04"
+        }
+      ],
+      "secondary_sources": [
+        {
+          "type": "third_party_guide",
+          "url": "https://sarkariyojana.com/raitha-shakti-yojana-karnataka/",
+          "title": "SarkariYojana - Raitha Shakti Guide",
+          "last_accessed": "2026-02-04",
+          "used_for": ["eligibility_criteria", "subsidy_amount", "land_limits"]
+        },
+        {
+          "type": "third_party_guide",
+          "url": "https://pmmodiyojana.in/karnataka-raitha-shakti-scheme/",
+          "title": "PMModiYojana - Raitha Shakti Details",
+          "last_accessed": "2026-02-04",
+          "used_for": ["application_process", "budget_allocation"]
+        }
+      ],
+      "eligibility_criteria_sources": {
+        "residency": "SarkariYojana - Karnataka farmers",
+        "fruits_registration": "Official FRUITS portal - mandatory",
+        "land_limit": "SarkariYojana - max 5 acres",
+        "subsidy_amount": "SarkariYojana - ₹250/acre"
+      }
+    }
+  },
+  "budget_sources": [
+    {
+      "type": "news_article",
+      "url": "https://thesouthfirst.com/karnataka/karnatakas-five-guarantee-schemes-continue-with-%E2%82%B951034-crore-in-2025-budget/",
+      "title": "Karnataka's five guarantee schemes continue with ₹51,034 crore in 2025 budget",
+      "publication": "The South First",
+      "date": "2025",
+      "last_accessed": "2026-02-04"
+    }
+  ]
+}

@@ -117,6 +117,101 @@ INSERT INTO schemes (slug, name_en, name_kn, department, eligibility_summary, be
 
 
 -- ============================================================================
+-- SCHEME SOURCES & HELPLINES
+-- Each source includes: type (official/secondary), url, title, used_for, last_accessed
+-- ============================================================================
+
+-- Gruha Lakshmi sources
+UPDATE schemes SET
+  sources = '[
+    {"type": "official", "url": "https://dwcd.karnataka.gov.in/info-2/GRUHALAKSHMI+SCHEME/en", "title": "WCD Karnataka Official Page", "used_for": "primary_eligibility"},
+    {"type": "official", "url": "https://dwcd.karnataka.gov.in/41/gruhalakshmi-scheme/en", "title": "Scheme Guidelines", "used_for": "detailed_guidelines"},
+    {"type": "official", "url": "https://sevasindhuservices.karnataka.gov.in/", "title": "Seva Sindhu Portal", "used_for": "application"},
+    {"type": "secondary", "url": "https://cleartax.in/s/gruha-lakshmi-scheme-karnataka", "title": "ClearTax Guide", "used_for": "eligibility_details,documents,exclusions"}
+  ]'::jsonb,
+  helpline = '{"phone": ["1902", "08147500500", "08277000555"], "method": "SMS ration card number"}'::jsonb
+WHERE slug = 'gruha-lakshmi';
+
+-- Anna Bhagya sources
+UPDATE schemes SET
+  sources = '[
+    {"type": "official", "url": "https://ahara.kar.nic.in/", "title": "Karnataka Ahara Portal", "used_for": "primary_source"},
+    {"type": "secondary", "url": "https://cleartax.in/s/anna-bhagya-scheme", "title": "ClearTax Guide", "used_for": "eligibility,benefits"},
+    {"type": "secondary", "url": "https://www.govtschemes.in/karnataka-anna-bhagya-scheme", "title": "GovtSchemes.in", "used_for": "ration_card_types"}
+  ]'::jsonb,
+  helpline = '{"phone": ["1967", "18004259339"], "email": "foodcom-ka@nic.in"}'::jsonb
+WHERE slug = 'anna-bhagya';
+
+-- Shakti sources
+UPDATE schemes SET
+  sources = '[
+    {"type": "official", "url": "https://yuvakanaja.karnataka.gov.in/591/shakti-yojana/en", "title": "Yuva Kanaja Official", "used_for": "primary_eligibility"},
+    {"type": "official", "url": "https://shakti.ksrtc.in/", "title": "KSRTC Shakti Portal", "used_for": "bus_service_details"},
+    {"type": "official", "url": "https://sevasindhuservices.karnataka.gov.in/", "title": "Seva Sindhu Smart Card", "used_for": "application"},
+    {"type": "secondary", "url": "https://www.govtschemes.in/karnataka-shakti-scheme", "title": "GovtSchemes.in", "used_for": "age_limits,bus_types,exclusions"},
+    {"type": "secondary", "url": "https://www.scribd.com/document/684347950/Karnataka-Shakti-Scheme-Guidelines", "title": "Guidelines PDF", "used_for": "official_guidelines"}
+  ]'::jsonb,
+  helpline = '{"phone": ["1902", "080-4959-6666"], "email": "sevasindhu@karnataka.gov.in"}'::jsonb
+WHERE slug = 'shakti';
+
+-- Yuva Nidhi sources
+UPDATE schemes SET
+  sources = '[
+    {"type": "official", "url": "https://kaushalya.karnataka.gov.in/21/yuvanidhi-scheme/en", "title": "Kaushalya Karnataka Official", "used_for": "primary_eligibility"},
+    {"type": "official", "url": "https://ceg.karnataka.gov.in/Blog/public/details/YuvaNidhi/en", "title": "CEG Eligibility Checker", "used_for": "self_check"},
+    {"type": "official", "url": "https://sevasindhuservices.karnataka.gov.in/directApply.do?serviceId=2079", "title": "Direct Application Link", "used_for": "application"},
+    {"type": "official", "url": "https://kaushalya.karnataka.gov.in/uploads/media_to_upload1654077894.pdf", "title": "RTI 4(1)A Document", "used_for": "department_structure"},
+    {"type": "secondary", "url": "https://en.wikipedia.org/wiki/Yuva_Nidhi", "title": "Wikipedia", "used_for": "launch_date,overview"},
+    {"type": "secondary", "url": "https://cleartax.in/s/yuva-nidhi-scheme-karnataka", "title": "ClearTax Guide", "used_for": "detailed_exclusions"}
+  ]'::jsonb,
+  helpline = '{"phone": ["1800-599-9918", "1902"]}'::jsonb
+WHERE slug = 'yuva-nidhi';
+
+-- Sandhya Suraksha sources
+UPDATE schemes SET
+  sources = '[
+    {"type": "official", "url": "https://karunadu.karnataka.gov.in/welfareofdisabled/Pages/Senior-Citizen-Schemes.aspx", "title": "Karnataka Social Welfare", "used_for": "primary_source"},
+    {"type": "official", "url": "https://sevasindhuservices.karnataka.gov.in/", "title": "Seva Sindhu Portal", "used_for": "application"},
+    {"type": "secondary", "url": "https://www.indiafilings.com/learn/sandhya-surksha-pension-scheme/", "title": "IndiaFilings Guide", "used_for": "eligibility,income_limits"},
+    {"type": "secondary", "url": "https://schemesandentitlements.org/public/books/making-entitlements-work/page/scheme-4-sandhya-suraksha-yojana", "title": "Schemes & Entitlements", "used_for": "unorganized_sector_details"}
+  ]'::jsonb,
+  helpline = '{}'::jsonb
+WHERE slug = 'sandhya-suraksha';
+
+-- Bhagya Lakshmi sources
+UPDATE schemes SET
+  sources = '[
+    {"type": "official", "url": "https://blakshmi.kar.nic.in/", "title": "Bhagya Lakshmi Official Portal", "used_for": "primary_source,application"},
+    {"type": "official", "url": "https://www.myscheme.gov.in/schemes/bys", "title": "myScheme.gov.in", "used_for": "government_verification"},
+    {"type": "secondary", "url": "https://cleartax.in/s/bhagyalakshmi-scheme-karnataka", "title": "ClearTax Guide", "used_for": "eligibility,benefits"},
+    {"type": "secondary", "url": "https://socialwelfare.vikaspedia.in/viewcontent/social-welfare/women-and-child-development/child-development-1/girl-child-welfare/state-wise-schemes-for-girl-child-welfare/bhagyalaxmi-scheme-of-karnataka?lgn=en", "title": "Vikaspedia", "used_for": "bond_details"}
+  ]'::jsonb,
+  helpline = '{}'::jsonb
+WHERE slug = 'bhagya-lakshmi';
+
+-- Vidyasiri sources
+UPDATE schemes SET
+  sources = '[
+    {"type": "official", "url": "https://bcwd.karnataka.gov.in/44/vidyasiri/en", "title": "BCWD Karnataka Official", "used_for": "primary_eligibility"},
+    {"type": "official", "url": "https://bcwd.karnataka.gov.in/info-2/Scholarships/Vidyasiri/en", "title": "Vidyasiri Scholarship Info", "used_for": "detailed_info"},
+    {"type": "official", "url": "https://ssp.postmatric.karnataka.gov.in/", "title": "SSP Portal", "used_for": "application"},
+    {"type": "secondary", "url": "https://www.collegesearch.in/articles/vidyasiri-scholarship", "title": "CollegeSearch Guide", "used_for": "application_process,deadlines"}
+  ]'::jsonb,
+  helpline = '{"phone": ["8050770005"], "email": "bcdbng@kar.nic.in", "address": "No.16/D, 3rd Floor, Devraj Urs Bhavan, Millers Tank Bed Road, Vasanth Nagar, Bangalore – 560052"}'::jsonb
+WHERE slug = 'vidyasiri';
+
+-- Raitha Shakti sources
+UPDATE schemes SET
+  sources = '[
+    {"type": "official", "url": "https://fruits.karnataka.gov.in/", "title": "FRUITS Portal", "used_for": "farmer_registration,eligibility"},
+    {"type": "secondary", "url": "https://sarkariyojana.com/raitha-shakti-yojana-karnataka/", "title": "SarkariYojana Guide", "used_for": "eligibility,subsidy_amount"},
+    {"type": "secondary", "url": "https://pmmodiyojana.in/karnataka-raitha-shakti-scheme/", "title": "PMModiYojana Guide", "used_for": "application_process"}
+  ]'::jsonb,
+  helpline = '{}'::jsonb
+WHERE slug = 'raitha-shakti';
+
+
+-- ============================================================================
 -- DECISION TREES
 -- ============================================================================
 
