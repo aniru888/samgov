@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { DisclaimerBanner } from "@/components/disclaimer-banner";
+import { LanguageProvider } from "@/lib/i18n";
+import { Header, BottomNav } from "@/components/layout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,18 +28,30 @@ export const metadata: Metadata = {
   ],
 };
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        <DisclaimerBanner />
-        {children}
+        <LanguageProvider>
+          <DisclaimerBanner />
+          <Header />
+          <div className="flex-1 flex flex-col">
+            {children}
+          </div>
+          <BottomNav />
+        </LanguageProvider>
       </body>
     </html>
   );
