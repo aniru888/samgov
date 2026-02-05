@@ -56,7 +56,7 @@ const statusConfig: Record<
 
 export function ResultStep({
   result,
-  schemeName,
+  schemeName: _schemeName, // Reserved for future use
   schemeSlug,
   onReset,
   className,

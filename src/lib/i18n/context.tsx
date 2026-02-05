@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import type { Language, TranslationKey } from "./types"
-import { translations, t } from "./translations"
+import { t } from "./translations"
 
 const STORAGE_KEY = "samgov-language"
 

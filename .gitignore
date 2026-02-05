@@ -41,6 +41,12 @@ next-env.d.ts
 *.swp
 *.swo
 
+# Downloaded documents (sourced by scripts/source-documents.ts)
+/documents/
+
+# Script output
+scripts/decision-trees.json
+
 # Claude Code local settings
 .claude/settings.local.json
 

@@ -17,7 +17,7 @@ export function ProgressBar({
   percentComplete,
   className,
 }: ProgressBarProps) {
-  const { t, language } = useTranslation()
+  const { language } = useTranslation()
 
   const stepText =
     language === "kn"

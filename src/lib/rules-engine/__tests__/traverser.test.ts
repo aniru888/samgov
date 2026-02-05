@@ -97,7 +97,9 @@ describe("getCurrentNode", () => {
     const node = getCurrentNode(testTree, state)
 
     expect(node.type).toBe("question")
-    expect((node as any).text_en).toBe("Are you a resident?")
+    if (node.type === "question") {
+      expect(node.text_en).toBe("Are you a resident?")
+    }
   })
 
   it("throws for invalid node ID", () => {
@@ -124,13 +126,14 @@ describe("getCurrentQuestion", () => {
   })
 
   it("returns null for result node", () => {
+    const resultNode = testTree.nodes["r_eligible"]
     const state: WizardState = {
       schemeId: "s",
       treeId: "t",
       currentNodeId: "r_eligible",
       answers: [],
       isComplete: true,
-      result: testTree.nodes["r_eligible"] as any,
+      result: resultNode.type === "result" ? resultNode : undefined,
     }
 
     const question = getCurrentQuestion(testTree, state)

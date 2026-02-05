@@ -46,9 +46,9 @@
 | Frontend + API | `src/app/` | Next.js 14+ App Router |
 | Components | `src/components/` | React, shadcn/ui, Tailwind |
 | Database | `supabase/` | Supabase (Postgres + pgvector) |
-| RAG Pipeline | `src/lib/rag/` | Gemini 1.5 Flash, Supabase Edge |
+| RAG Pipeline | `src/lib/rag/` | Gemini 2.5 Flash, Cohere Embeddings |
+| Document Ingestion | `src/lib/rag/ingestion/` | pdf-parse + LlamaParse |
 | Decision Trees | `src/lib/rules-engine/` | JSONB, Zod validation |
-| Edge Functions | `supabase/functions/` | Deno (Supabase Edge) |
 
 > **For full implementation plan, see [PLAN.md](./PLAN.md).**
 
@@ -60,20 +60,31 @@
 |-------|------------|------------------|
 | **Framework** | Next.js 14+ App Router | Vercel: 100GB bandwidth |
 | **Database** | Supabase (Postgres) | 500MB storage, 2GB transfer |
-| **Vector Search** | pgvector (384 dims) | Included in Supabase |
-| **LLM** | Google Gemini 1.5 Flash | 60 req/min, 1.5M tokens/day (~600 queries) |
-| **Embeddings** | Supabase Edge (gte-small) | Unlimited |
+| **Vector Search** | pgvector (1024 dims) | Included in Supabase |
+| **LLM** | Google Gemini 2.5 Flash | **10 RPM, 20-250 RPD** (disputed, plan for 20) |
+| **Embeddings** | Cohere embed-multilingual-v3 | 1,000 calls/month (96 texts/call) |
+| **Document Parsing** | LlamaParse (Cost Effective) | 10K credits/month (~3,333 pages) |
 | **Auth** | Supabase Auth | 50K MAU |
 | **Deployment** | Vercel | Hobby tier |
 
 ### Free Tier Budget (MEMORIZE THIS)
 
-| Resource | Daily Limit | Per-Minute | Action if Exceeded |
-|----------|-------------|------------|-------------------|
-| Gemini tokens | 1.5M | N/A | Queue + "try later" message |
-| Gemini requests | N/A | 60 | Client-side rate limiting |
-| Supabase Edge | Unlimited | N/A | N/A |
-| Vercel bandwidth | ~3GB | N/A | ISR caching reduces this |
+| Resource | Limit | Per-Minute | Action if Exceeded |
+|----------|-------|------------|-------------------|
+| Gemini requests | **20-250 RPD** (plan for 20) | **10 RPM** | 6s throttle + "service busy" message |
+| Gemini tokens | 250K TPM | 250K TPM | Token counting before calls |
+| Cohere embed | **1,000 calls/month** | 2,000 inputs/min | Block + "quota exhausted" message |
+| LlamaParse | **10K credits/month** | 20 RPM | Block ingestion, notify admin |
+| Vercel bandwidth | ~3GB/day | N/A | ISR caching reduces this |
+
+**Environment Variables Required:**
+- `GEMINI_API_KEY` - Google Gemini 2.5 Flash (Q&A generation)
+- `COHERE_API_KEY` - Cohere embed-multilingual-v3 (embeddings)
+- `LLAMA_CLOUD_API_KEY` - LlamaParse (document parsing/OCR)
+- `NEXT_PUBLIC_SUPABASE_URL` + `NEXT_PUBLIC_SUPABASE_ANON_KEY` - Supabase client
+- `SUPABASE_SERVICE_ROLE_KEY` - Supabase admin operations
+
+**CRITICAL**: Gemini 2.0 Flash **deprecated March 31, 2026**. Use `gemini-2.5-flash`.
 
 ---
 
@@ -115,17 +126,26 @@ samgov/
 │   │   │   └── debugger.ts       # Tree traversal logic
 │   │   ├── rag/                  # RAG pipeline
 │   │   │   ├── pipeline.ts       # Main askQuestion function
-│   │   │   ├── embeddings.ts     # Supabase Edge embedding
-│   │   │   └── prompts.ts        # System prompts
+│   │   │   ├── embeddings.ts     # Cohere embed-multilingual-v3 (1024 dims)
+│   │   │   ├── gemini.ts         # Gemini 2.5 Flash wrapper
+│   │   │   ├── search.ts         # Hybrid search (semantic + keyword)
+│   │   │   ├── sanitize.ts       # Prompt injection prevention
+│   │   │   ├── prompts.ts        # System prompts
+│   │   │   ├── rate-limit.ts     # Rate limiting
+│   │   │   ├── token-counter.ts  # Token estimation
+│   │   │   └── ingestion/        # Document ingestion pipeline
+│   │   │       ├── document-processor.ts  # pdf-parse → LlamaParse
+│   │   │       ├── llamaparse-client.ts   # LlamaParse REST client
+│   │   │       ├── chunker.ts    # Markdown-aware text chunking
+│   │   │       ├── ingest.ts     # Orchestrator
+│   │   │       └── quota-tracker.ts # API usage tracking
 │   │   └── utils/
 │   │       ├── rate-limit.ts     # Client-side rate limiting
 │   │       └── cache.ts          # unstable_cache wrappers
 │   └── types/                    # Shared TypeScript types
 ├── supabase/
-│   ├── migrations/               # SQL migrations
-│   ├── seed.sql                  # Initial Karnataka schemes
-│   └── functions/
-│       └── embed/                # Edge function for embeddings
+│   ├── migrations/               # SQL migrations (001-008)
+│   └── seed.sql                  # Initial Karnataka schemes
 ├── public/
 │   └── locales/                  # i18n (en, kn)
 ├── PLAN.md                       # Full implementation plan
@@ -287,15 +307,22 @@ const NodeSchema = z.discriminatedUnion('type', [
 ### RAG Pipeline
 
 **Embedding consistency is CRITICAL:**
-- Documents: 384 dims (gte-small via Supabase Edge)
-- Queries: 384 dims (gte-small via Supabase Edge)
-- NEVER mix embedding models
+- Documents: 1024 dims (Cohere embed-multilingual-v3, `input_type: "search_document"`)
+- Queries: 1024 dims (Cohere embed-multilingual-v3, `input_type: "search_query"`)
+- NEVER mix embedding models or input types
+
+**Document ingestion pipeline:**
+- Tier 1: `pdf-parse` for digital PDFs (instant, free)
+- Tier 2: LlamaParse for scanned/Kannada PDFs (10K credits/month)
+- Chunking: ~500 tokens/chunk, heading-aware, max 512 (Cohere limit)
+- Deduplication: SHA-256 hash per chunk
 
 **Hallucination prevention:**
 - Always show source citations
-- If retrieval score < 0.7, say "I'm not sure"
+- If retrieval score < 0.65, say "I'm not sure"
 - System prompt: "Only answer from provided context"
 - For critical queries (documents, deadlines), fall back to hardcoded data
+- 12 prompt injection patterns detected and blocked
 
 ### Frontend Rules
 
@@ -468,9 +495,10 @@ npm run build
 
 ### @rag - AI Document Q&A
 
-**Tables:** `document_chunks`, `chat_sessions`, `chat_messages`
-**Pipeline:** Query → Embed (Supabase Edge) → pgvector search → Gemini
-**Safety:** Citation required, confidence threshold, rate limiting
+**Tables:** `documents`, `document_chunks`, `query_cache`, `chat_sessions`, `chat_messages`, `api_usage`
+**Query Pipeline:** Query → Cohere embed (1024-dim) → pgvector hybrid search → Gemini 2.5 Flash
+**Ingestion Pipeline:** PDF → pdf-parse/LlamaParse → chunk → Cohere embed → pgvector
+**Safety:** Citation required, confidence threshold, rate limiting, prompt injection detection
 
 ### @admin - Content Management
 
@@ -525,9 +553,10 @@ npx supabase db push --db-url "postgres://..."  # Production migration
 ## Troubleshooting
 
 ### "Embedding dimension mismatch"
-- Ensure ALL embeddings use gte-small (384 dims)
-- Check `document_chunks.embedding` column is VECTOR(384)
+- Ensure ALL embeddings use Cohere embed-multilingual-v3 (1024 dims)
+- Check `document_chunks.embedding` column is VECTOR(1024) (migration 007)
 - Re-embed documents if model changed
+- Use `input_type: "search_document"` for documents, `"search_query"` for queries
 
 ### "Rate limit exceeded" from Gemini
 - Check client-side throttling is in place
@@ -547,5 +576,5 @@ npx supabase db push --db-url "postgres://..."  # Production migration
 
 ---
 
-**Last Updated:** 2026-02-04
-**Plan Version:** 1.0
+**Last Updated:** 2026-02-05
+**Plan Version:** 2.0

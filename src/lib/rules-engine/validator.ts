@@ -8,7 +8,6 @@
 
 import type {
   DecisionTree,
-  DecisionNode,
   TreeValidationError,
   TreeValidationResult,
 } from "./types"
@@ -180,8 +179,7 @@ function detectCycle(tree: DecisionTree): { hasCycle: boolean; path: string[] } 
 
   function dfs(nodeId: string): boolean {
     if (recursionStack.has(nodeId)) {
-      // Found a cycle
-      const cycleStart = path.indexOf(nodeId)
+      // Found a cycle - nodeId is the start of the cycle
       return true
     }
 

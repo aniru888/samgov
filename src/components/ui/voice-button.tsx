@@ -17,7 +17,7 @@ const VoiceButton = React.forwardRef<HTMLButtonElement, VoiceButtonProps>(
     {
       className,
       state = "idle",
-      onStateChange,
+      onStateChange: _onStateChange, // Reserved for voice implementation
       size = "default",
       disabled,
       ...props

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, useMemo } from "react"
+import { useState, useCallback, useMemo, useEffect } from "react"
 import type { DecisionTree, WizardState, QuestionNode, ResultNode } from "@/lib/rules-engine"
 import {
   initializeWizard,
@@ -41,10 +41,12 @@ export function useWizard(
   const [error, setError] = useState<string | null>(null)
 
   // Initialize wizard when tree becomes available
-  useMemo(() => {
+  // This is an intentional synchronous effect for initialization
+  useEffect(() => {
     if (tree && schemeId && treeId && !state) {
       try {
         const initialState = initializeWizard(schemeId, treeId, tree)
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setState(initialState)
         setError(null)
       } catch (err) {
