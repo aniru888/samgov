@@ -14,11 +14,11 @@
 | @debugger | Rejection Debugger Wizard | Complete | P0 |
 | @debugger | Decision Tree Validation | Complete | P0 |
 | @rag | Document Q&A Query Pipeline | Complete | P0 |
-| @rag | Document Ingestion Pipeline | In Progress | P0 |
+| @rag | Document Ingestion Pipeline | Complete | P0 |
 | @rag | Source Citations | Complete | P0 |
 | @admin | Admin Dashboard | Not Started | P1 |
 | @admin | Decision Tree Editor | Not Started | P1 |
-| @admin | Document Upload API | In Progress | P1 |
+| @admin | Document Upload API | Complete | P1 |
 | @legal | Disclaimer Banner | Complete | P0 |
 | @legal | Terms of Service | Not Started | P0 |
 | @legal | Privacy Policy | Not Started | P0 |

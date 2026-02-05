@@ -574,7 +574,49 @@ npx supabase db push --db-url "postgres://..."  # Production migration
 - Check keep-alive cron is running
 - Verify connection string in env vars
 
+### plpgsql VARCHAR→TEXT mismatch
+- PostgreSQL is strict: if RETURNS TABLE declares `TEXT`, the query must return `TEXT`
+- `documents.title` is `VARCHAR(500)` — must cast `d.title::TEXT` in function body
+- This applies to ALL plpgsql functions that join against VARCHAR columns
+- Symptoms: "structure of query does not match function result type"
+
+### Cohere embed model name
+- Correct: `embed-multilingual-v3.0` (with `.0`)
+- Wrong: `embed-multilingual-v3` (returns 404)
+- Always verify model names against API docs before deploying
+
+### .gitignore broad patterns
+- `documents/` matches ANY directory named "documents" in the entire tree
+- This blocks `src/app/api/documents/` from being committed
+- Fix: use `/documents/` (root-only) instead of `documents/`
+- **ALWAYS use root-anchored patterns** (`/dirname/`) unless you explicitly want recursive matching
+
+### Next.js App Router route groups in commits
+- `(admin)/`, `(public)/` route groups are easy to miss in `git status`
+- Always run `git status` after committing to catch missed route group directories
+- Parentheses in paths can cause shell escaping issues — quote paths
+
+### useMemo vs useEffect for state initialization
+- `useMemo` callback CANNOT call `setState` — React forbids side effects in useMemo
+- Use `useEffect` for any initialization that needs to set state
+- Symptoms: silent failures, state never updates
+
+### Vitest NOT Jest
+- This project uses Vitest, NOT Jest
+- Tests import from `"vitest"`, run with `npx vitest run` or `npm run test:run`
+- Config: `vitest.config.ts` (jsdom environment, globals: true)
+- Do NOT use `jest.fn()` — use `vi.fn()` instead
+
+### pdf-parse in Turbopack/Next.js dev
+- pdf-parse Worker module fails under Turbopack bundling
+- Workaround: bypass Next.js API routes for ingestion, call chunker+embedder directly
+- Production builds (non-Turbopack) work fine
+
+### Windows localhost resolution
+- On Windows, `localhost` may not resolve to `127.0.0.1`
+- Always use `127.0.0.1` explicitly in connection strings and API calls
+
 ---
 
-**Last Updated:** 2026-02-05
-**Plan Version:** 2.0
+**Last Updated:** 2026-02-06
+**Plan Version:** 2.1
