@@ -6,9 +6,10 @@ import type { Scheme } from "@/types/scheme"
 
 interface SchemeDetailClientProps {
   scheme: Scheme
+  hasDecisionTree?: boolean
 }
 
-export function SchemeDetailClient({ scheme }: SchemeDetailClientProps) {
+export function SchemeDetailClient({ scheme, hasDecisionTree = false }: SchemeDetailClientProps) {
   const { t, language } = useTranslation()
   const displayName = language === "kn" && scheme.name_kn ? scheme.name_kn : scheme.name_en
   const secondaryName = language === "kn" && scheme.name_kn ? scheme.name_en : scheme.name_kn
@@ -131,21 +132,23 @@ export function SchemeDetailClient({ scheme }: SchemeDetailClientProps) {
           </section>
         )}
 
-        {/* Debug Eligibility CTA */}
-        <section className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-          <h2 className="text-xl font-semibold text-blue-900 mb-2">
-            {t("schemeRejected")}
-          </h2>
-          <p className="text-blue-800 mb-4">
-            {t("schemeDebugRejection")}
-          </p>
-          <Link
-            href={`/debug/${scheme.slug}`}
-            className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            {t("checkEligibility")}
-          </Link>
-        </section>
+        {/* Debug Eligibility CTA - only show when decision tree exists */}
+        {hasDecisionTree && (
+          <section className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+            <h2 className="text-xl font-semibold text-blue-900 mb-2">
+              {t("schemeRejected")}
+            </h2>
+            <p className="text-blue-800 mb-4">
+              {t("schemeDebugRejection")}
+            </p>
+            <Link
+              href={`/debug/${scheme.slug}`}
+              className="inline-flex items-center px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              {t("checkEligibility")}
+            </Link>
+          </section>
+        )}
 
         {/* Footer Info */}
         <footer className="text-center text-sm text-gray-500 space-y-2">

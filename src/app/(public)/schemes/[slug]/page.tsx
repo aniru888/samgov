@@ -27,6 +27,19 @@ async function getScheme(slug: string): Promise<Scheme | null> {
   return data;
 }
 
+async function hasDecisionTree(schemeId: string): Promise<boolean> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("decision_trees")
+    .select("id")
+    .eq("scheme_id", schemeId)
+    .eq("is_active", true)
+    .limit(1);
+
+  if (error) return false;
+  return (data?.length ?? 0) > 0;
+}
+
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
@@ -55,5 +68,7 @@ export default async function SchemePage({ params }: PageProps) {
     notFound();
   }
 
-  return <SchemeDetailClient scheme={scheme} />;
+  const hasTree = await hasDecisionTree(scheme.id);
+
+  return <SchemeDetailClient scheme={scheme} hasDecisionTree={hasTree} />;
 }

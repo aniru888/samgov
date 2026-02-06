@@ -25,7 +25,7 @@ describe('BottomNav', () => {
     renderWithProvider(<BottomNav />)
 
     expect(screen.getByText('Home')).toBeInTheDocument()
-    expect(screen.getByText('Schemes')).toBeInTheDocument()
+    expect(screen.getByText('Explore')).toBeInTheDocument()
     expect(screen.getByText('Check')).toBeInTheDocument()
     expect(screen.getByText('Ask')).toBeInTheDocument()
     expect(screen.getByText('Profile')).toBeInTheDocument()
@@ -48,7 +48,7 @@ describe('BottomNav', () => {
     renderWithProvider(<BottomNav />)
 
     expect(screen.getByRole('link', { name: /home/i })).toHaveAttribute('href', '/')
-    expect(screen.getByRole('link', { name: /schemes/i })).toHaveAttribute('href', '/schemes')
+    expect(screen.getByRole('link', { name: /explore/i })).toHaveAttribute('href', '/explore')
     expect(screen.getByRole('link', { name: /check/i })).toHaveAttribute('href', '/debug')
     expect(screen.getByRole('link', { name: /ask/i })).toHaveAttribute('href', '/ask')
     expect(screen.getByRole('link', { name: /profile/i })).toHaveAttribute('href', '/profile')

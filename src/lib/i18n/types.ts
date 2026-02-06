@@ -99,6 +99,35 @@ export interface TranslationKeys {
   stopVoice: string
   processingVoice: string
   voiceError: string
+  voiceNotSupported: string
+  voiceMicDenied: string
+  voiceListening: string
+  voiceNoSpeech: string
+  voiceNoKannadaTTS: string
+  voiceNetworkError: string
+  readAloud: string
+  stopReading: string
+  readAllResults: string
+  speakYourQuery: string
+
+  // Explore / Recommendations
+  navExplore: string
+  exploreTitle: string
+  exploreSubtitle: string
+  explorePlaceholder: string
+  exploreSearch: string
+  exploreNoResults: string
+  exploreNoResultsHint: string
+  exploreHighlyRelevant: string
+  exploreRelevant: string
+  exploreMayBeRelevant: string
+  exploreDisclaimer: string
+  exploreBrowseAll: string
+  exploreFound: string
+  exploreAllCategories: string
+  exploreVerified: string
+  exploreAutoImported: string
+  exploreCheckEligibility: string
 }
 
 export type TranslationKey = keyof TranslationKeys

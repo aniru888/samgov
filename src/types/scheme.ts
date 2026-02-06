@@ -25,4 +25,12 @@ export interface Scheme {
   helpline: SchemeHelpline | null;
   created_at: string;
   updated_at: string;
+  // Recommendation fields (from migration 009)
+  category: string | null;
+  tags: string[] | null;
+  target_group: string | null;
+  benefits_type: string | null;
+  scheme_level: "state" | "central" | "both" | null;
+  is_active: boolean;
+  data_source: string | null;
 }

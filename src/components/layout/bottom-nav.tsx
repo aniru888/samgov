@@ -8,7 +8,7 @@ import { useTranslation } from "@/lib/i18n"
 
 interface NavItem {
   href: string
-  labelKey: "navHome" | "navSchemes" | "navCheck" | "navAsk" | "navProfile"
+  labelKey: "navHome" | "navSchemes" | "navCheck" | "navAsk" | "navProfile" | "navExplore"
   icon: React.ReactNode
   matchPaths?: string[]
 }
@@ -58,7 +58,7 @@ function ProfileIcon({ className }: { className?: string }) {
 
 const navItems: NavItem[] = [
   { href: "/", labelKey: "navHome", icon: <HomeIcon className="w-6 h-6" /> },
-  { href: "/schemes", labelKey: "navSchemes", icon: <SchemesIcon className="w-6 h-6" />, matchPaths: ["/schemes"] },
+  { href: "/explore", labelKey: "navExplore", icon: <SchemesIcon className="w-6 h-6" />, matchPaths: ["/explore", "/schemes"] },
   { href: "/debug", labelKey: "navCheck", icon: <CheckIcon className="w-6 h-6" />, matchPaths: ["/debug"] },
   { href: "/ask", labelKey: "navAsk", icon: <ChatIcon className="w-6 h-6" />, matchPaths: ["/ask"] },
   { href: "/profile", labelKey: "navProfile", icon: <ProfileIcon className="w-6 h-6" />, matchPaths: ["/profile"] },
