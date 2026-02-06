@@ -6,6 +6,8 @@ import { SuggestedQuestions } from "./suggested-questions";
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "@/lib/i18n";
 import { useLanguage } from "@/lib/i18n";
+import { useVoiceInput } from "@/lib/hooks/use-voice-input";
+import { VoiceButton } from "@/components/ui/voice-button";
 import type { RAGResponse, RAGError, Citation, ConfidenceLevel } from "@/lib/rag";
 import { OFFICIAL_PORTAL_URL } from "@/lib/rag";
 
@@ -33,6 +35,28 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const { t } = useTranslation();
   const { language } = useLanguage();
+
+  const sendMessageRef = useRef<((query: string) => void) | undefined>(undefined);
+
+  const handleVoiceTranscript = useCallback(
+    (text: string, isFinal: boolean) => {
+      setInput(text);
+      if (isFinal && text.trim()) {
+        sendMessageRef.current?.(text.trim());
+      }
+    },
+    []
+  );
+
+  const {
+    isSupported: voiceSupported,
+    state: voiceState,
+    errorMessage: voiceError,
+    toggle: toggleVoice,
+  } = useVoiceInput({
+    language: language as "en" | "kn",
+    onTranscript: handleVoiceTranscript,
+  });
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -129,6 +153,9 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
       setIsLoading(false);
     }
   }, [isLoading, rateLimitWait, language, t]);
+
+  // Keep ref in sync so voice callback can call sendMessage without stale closure
+  sendMessageRef.current = sendMessage;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -259,6 +286,15 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
               {remainingChars < 100 && `${remainingChars}`}
             </div>
           </div>
+          {voiceSupported && (
+            <VoiceButton
+              state={voiceState}
+              onClick={toggleVoice}
+              disabled={isDisabled}
+              aria-label={t("speakYourQuery")}
+              className="shrink-0"
+            />
+          )}
           <Button
             type="submit"
             disabled={isDisabled || !input.trim() || remainingChars < 0}
@@ -276,6 +312,14 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
             )}
           </Button>
         </form>
+        {voiceError && (
+          <p className="text-xs text-red-600 mt-1 text-center">{voiceError}</p>
+        )}
+        {voiceState === "listening" && (
+          <p className="text-xs text-teal-600 mt-1 text-center animate-pulse">
+            {t("voiceListening")}
+          </p>
+        )}
         <p className="text-xs text-gray-500 mt-2 text-center">
           {t("chatEnterToSend")}
         </p>

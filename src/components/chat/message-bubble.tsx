@@ -3,6 +3,7 @@
 import type { Citation, ConfidenceLevel } from "@/lib/rag";
 import { ConfidenceIndicator } from "./confidence-indicator";
 import { CitationCard } from "./citation-card";
+import { useTextToSpeech } from "@/lib/hooks/use-text-to-speech";
 
 interface MessageBubbleProps {
   role: "user" | "assistant";
@@ -24,6 +25,8 @@ export function MessageBubble({
   language = "en",
 }: MessageBubbleProps) {
   const isUser = role === "user";
+  const { isSupported: ttsSupported, hasKannadaVoice, isSpeaking, speak, stop } =
+    useTextToSpeech({ language: language || "en" });
 
   return (
     <div
@@ -85,6 +88,31 @@ export function MessageBubble({
                   ))}
                 </div>
               </div>
+            )}
+
+            {/* Read aloud button */}
+            {ttsSupported && (language !== "kn" || hasKannadaVoice) && (
+              <button
+                onClick={() => {
+                  if (isSpeaking) {
+                    stop();
+                  } else {
+                    speak(content);
+                  }
+                }}
+                className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700 transition-colors"
+                aria-label={isSpeaking ? (language === "kn" ? "ಓದುವುದನ್ನು ನಿಲ್ಲಿಸಿ" : "Stop reading") : (language === "kn" ? "ಓದಿ ಹೇಳಿ" : "Read aloud")}
+              >
+                <span>{isSpeaking ? "⏹" : "🔊"}</span>
+                <span>{isSpeaking ? (language === "kn" ? "ನಿಲ್ಲಿಸಿ" : "Stop") : (language === "kn" ? "ಓದಿ" : "Read")}</span>
+              </button>
+            )}
+            {language === "kn" && ttsSupported && !hasKannadaVoice && (
+              <p className="text-xs text-amber-600">
+                {language === "kn"
+                  ? "ಕನ್ನಡ ಧ್ವನಿ ಲಭ್ಯವಿಲ್ಲ. ಸಾಧನ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಸ್ಥಾಪಿಸಿ."
+                  : "Kannada voice not available. Install in device settings."}
+              </p>
             )}
           </div>
         )}
