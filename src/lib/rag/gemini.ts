@@ -4,7 +4,7 @@
  */
 
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { buildPrompt, validateResponse, formatChunksAsContext, LOW_CONFIDENCE_RESPONSE, NO_RESULTS_RESPONSE } from "./prompts";
+import { buildPrompt, validateResponse, formatChunksAsContext, getLowConfidenceResponse, getNoResultsResponse } from "./prompts";
 import { validateTokenBudget } from "./token-counter";
 import type { RetrievedChunk, RAGResponse, Citation } from "./types";
 import { OFFICIAL_PORTAL_URL } from "./types";
@@ -25,14 +25,25 @@ function getGenAI(): GoogleGenerativeAI {
 }
 
 /**
- * Generate response using Gemini 2.0 Flash
+ * Check if response contains Kannada characters
+ * Used to detect if Gemini actually responded in Kannada
+ */
+function containsKannada(text: string): boolean {
+  // Kannada Unicode range: \u0C80-\u0CFF
+  return /[\u0C80-\u0CFF]/.test(text);
+}
+
+/**
+ * Generate response using Gemini 2.5 Flash
  * @param query - User's question
  * @param chunks - Retrieved document chunks
+ * @param language - Response language
  * @returns RAG response with citations
  */
 export async function generateResponse(
   query: string,
-  chunks: RetrievedChunk[]
+  chunks: RetrievedChunk[],
+  language: "en" | "kn" = "en"
 ): Promise<RAGResponse> {
   const ai = getGenAI();
   const model = ai.getGenerativeModel({
@@ -62,8 +73,8 @@ export async function generateResponse(
     throw new Error(tokenCheck.error || "Token budget exceeded");
   }
 
-  // Build the full prompt
-  const fullPrompt = buildPrompt(context, query);
+  // Build the full prompt (with language instruction for Kannada)
+  const fullPrompt = buildPrompt(context, query, language);
 
   // Call Gemini API
   const startTime = Date.now();
@@ -71,7 +82,7 @@ export async function generateResponse(
   const processingTime = Date.now() - startTime;
 
   const response = result.response;
-  const text = response.text();
+  let text = response.text();
 
   // Get token usage
   const usageMetadata = response.usageMetadata;
@@ -79,8 +90,13 @@ export async function generateResponse(
   const outputTokens = usageMetadata?.candidatesTokenCount || 0;
   const tokensUsed = inputTokens + outputTokens;
 
-  // Validate response follows safety rules
-  const validation = validateResponse(text);
+  // NO SILENT FALLBACKS: If Kannada was requested but response is English, flag it
+  if (language === "kn" && !containsKannada(text)) {
+    text = "Note: Kannada response was unavailable. Showing English response.\n\n" + text;
+  }
+
+  // Validate response follows safety rules (language-aware)
+  const validation = validateResponse(text, language);
   if (!validation.valid) {
     console.warn("Response validation issues:", validation.issues);
     // Don't block - just log the issues
@@ -159,11 +175,12 @@ function truncateExcerpt(content: string, maxLength: number = 200): string {
 
 /**
  * Generate a low-confidence response when retrieval doesn't find good matches
+ * @param language - Response language
  * @returns Low-confidence response with fallback guidance
  */
-export function generateLowConfidenceResponse(): RAGResponse {
+export function generateLowConfidenceResponse(language: "en" | "kn" = "en"): RAGResponse {
   return {
-    answer: LOW_CONFIDENCE_RESPONSE,
+    answer: getLowConfidenceResponse(language),
     citations: [],
     confidence: "low",
     cached: false,
@@ -173,11 +190,12 @@ export function generateLowConfidenceResponse(): RAGResponse {
 
 /**
  * Generate a no-results response when no documents are found
+ * @param language - Response language
  * @returns No-results response
  */
-export function generateNoResultsResponse(): RAGResponse {
+export function generateNoResultsResponse(language: "en" | "kn" = "en"): RAGResponse {
   return {
-    answer: NO_RESULTS_RESPONSE,
+    answer: getNoResultsResponse(language),
     citations: [],
     confidence: "low",
     cached: false,
@@ -188,27 +206,28 @@ export function generateNoResultsResponse(): RAGResponse {
 /**
  * Generate an error response for API failures
  * @param errorType - Type of error
+ * @param language - Response language
  * @returns User-friendly error response
  */
 export function generateErrorResponse(
-  errorType: "rate_limit" | "api_error" | "token_limit"
+  errorType: "rate_limit" | "api_error" | "token_limit",
+  language: "en" | "kn" = "en"
 ): RAGResponse {
-  const messages = {
-    rate_limit: `I'm currently handling many requests. Please wait a moment and try again.
-
-In the meantime, you can check the official portal for information: ${OFFICIAL_PORTAL_URL}`,
-
-    api_error: `I'm having trouble processing your question right now.
-
-Please try again in a few moments, or visit the official portal: ${OFFICIAL_PORTAL_URL}`,
-
-    token_limit: `Your question is too long for me to process. Please try asking a shorter, more specific question.
-
-You can also check the official portal directly: ${OFFICIAL_PORTAL_URL}`,
+  const messages: Record<string, Record<string, string>> = {
+    en: {
+      rate_limit: `I'm currently handling many requests. Please wait a moment and try again.\n\nIn the meantime, you can check the official portal for information: ${OFFICIAL_PORTAL_URL}`,
+      api_error: `I'm having trouble processing your question right now.\n\nPlease try again in a few moments, or visit the official portal: ${OFFICIAL_PORTAL_URL}`,
+      token_limit: `Your question is too long for me to process. Please try asking a shorter, more specific question.\n\nYou can also check the official portal directly: ${OFFICIAL_PORTAL_URL}`,
+    },
+    kn: {
+      rate_limit: `ಪ್ರಸ್ತುತ ಅನೇಕ ವಿನಂತಿಗಳನ್ನು ನಿರ್ವಹಿಸುತ್ತಿದ್ದೇನೆ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯ ಕಾಯಿರಿ ಮತ್ತು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.\n\nಈ ಮಧ್ಯೆ, ಅಧಿಕೃತ ಪೋರ್ಟಲ್‌ನಲ್ಲಿ ಮಾಹಿತಿ ಪರಿಶೀಲಿಸಿ: ${OFFICIAL_PORTAL_URL}`,
+      api_error: `ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಪ್ರಕ್ರಿಯೆಗೊಳಿಸಲು ಸಮಸ್ಯೆ ಎದುರಾಗಿದೆ.\n\nದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ, ಅಥವಾ ಅಧಿಕೃತ ಪೋರ್ಟಲ್‌ಗೆ ಭೇಟಿ ನೀಡಿ: ${OFFICIAL_PORTAL_URL}`,
+      token_limit: `ನಿಮ್ಮ ಪ್ರಶ್ನೆ ತುಂಬಾ ಉದ್ದವಾಗಿದೆ. ದಯವಿಟ್ಟು ಚಿಕ್ಕ, ಹೆಚ್ಚು ನಿರ್ದಿಷ್ಟ ಪ್ರಶ್ನೆ ಕೇಳಿ.\n\nನೇರವಾಗಿ ಅಧಿಕೃತ ಪೋರ್ಟಲ್ ಪರಿಶೀಲಿಸಿ: ${OFFICIAL_PORTAL_URL}`,
+    },
   };
 
   return {
-    answer: messages[errorType],
+    answer: messages[language][errorType],
     citations: [],
     confidence: "low",
     cached: false,

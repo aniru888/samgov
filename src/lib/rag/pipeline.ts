@@ -24,11 +24,13 @@ import {
  *
  * @param query - User's question
  * @param sessionId - Optional session ID for history tracking
+ * @param language - Response language ("en" or "kn")
  * @returns RAG result (success with response, or error)
  */
 export async function askQuestion(
   query: string,
-  _sessionId?: string // Reserved for future session tracking
+  _sessionId?: string, // Reserved for future session tracking
+  language: "en" | "kn" = "en"
 ): Promise<RAGResult> {
   const startTime = Date.now();
 
@@ -40,7 +42,9 @@ export async function askQuestion(
         success: false,
         error: {
           type: rateStatus.daily_remaining === 0 ? "daily_limit" : "rate_limit",
-          message: rateStatus.reason || "Rate limit exceeded",
+          message: language === "kn"
+            ? (rateStatus.reason || "ದರ ಮಿತಿ ಮೀರಿದೆ")
+            : (rateStatus.reason || "Rate limit exceeded"),
           fallback_url: OFFICIAL_PORTAL_URL,
           retry_after_ms: rateStatus.wait_ms,
           daily_remaining: rateStatus.daily_remaining,
@@ -55,7 +59,9 @@ export async function askQuestion(
         success: false,
         error: {
           type: "query_blocked",
-          message: sanitized.reason || "Query blocked for safety",
+          message: language === "kn"
+            ? (sanitized.reason || "ಪ್ರಶ್ನೆ ಸುರಕ್ಷತೆಗಾಗಿ ತಡೆಯಲಾಗಿದೆ")
+            : (sanitized.reason || "Query blocked for safety"),
           fallback_url: OFFICIAL_PORTAL_URL,
         },
       };
@@ -88,7 +94,7 @@ export async function askQuestion(
       console.log(`No results for query: ${sanitizeForLogging(cleanQuery)}`);
       return {
         success: true,
-        data: generateNoResultsResponse(),
+        data: generateNoResultsResponse(language),
       };
     }
 
@@ -101,12 +107,12 @@ export async function askQuestion(
       );
       return {
         success: true,
-        data: generateLowConfidenceResponse(),
+        data: generateLowConfidenceResponse(language),
       };
     }
 
-    // Step 6: Generate response with Gemini
-    const response = await generateResponse(cleanQuery, searchResult.chunks);
+    // Step 6: Generate response with Gemini (with language)
+    const response = await generateResponse(cleanQuery, searchResult.chunks, language);
 
     // Record the API call for rate limiting
     recordQuery();
@@ -144,7 +150,9 @@ export async function askQuestion(
         success: false,
         error: {
           type: "rate_limit",
-          message: "Service is temporarily busy. Please try again shortly.",
+          message: language === "kn"
+            ? "ಸೇವೆ ತಾತ್ಕಾಲಿಕವಾಗಿ ಬ್ಯುಸಿಯಾಗಿದೆ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ."
+            : "Service is temporarily busy. Please try again shortly.",
           fallback_url: OFFICIAL_PORTAL_URL,
         },
       };
@@ -155,8 +163,9 @@ export async function askQuestion(
         success: false,
         error: {
           type: "token_limit",
-          message:
-            "Your question is too long. Please try a shorter, more specific question.",
+          message: language === "kn"
+            ? "ನಿಮ್ಮ ಪ್ರಶ್ನೆ ತುಂಬಾ ಉದ್ದವಾಗಿದೆ. ದಯವಿಟ್ಟು ಚಿಕ್ಕ, ಹೆಚ್ಚು ನಿರ್ದಿಷ್ಟ ಪ್ರಶ್ನೆ ಕೇಳಿ."
+            : "Your question is too long. Please try a shorter, more specific question.",
           fallback_url: OFFICIAL_PORTAL_URL,
         },
       };
@@ -167,8 +176,9 @@ export async function askQuestion(
       success: false,
       error: {
         type: "api_error",
-        message:
-          "Something went wrong. Please try again or visit the official portal.",
+        message: language === "kn"
+          ? "ಏನೋ ತಪ್ಪಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಅಧಿಕೃತ ಪೋರ್ಟಲ್‌ಗೆ ಭೇಟಿ ನೀಡಿ."
+          : "Something went wrong. Please try again or visit the official portal.",
         fallback_url: OFFICIAL_PORTAL_URL,
       },
     };
@@ -215,10 +225,50 @@ export async function checkQueryConfidence(
 /**
  * Get suggested questions based on available documents
  * @param schemeSlug - Optional scheme to filter suggestions
+ * @param language - Language for suggestions
  * @returns Array of suggested question strings
  */
-export function getSuggestedQuestions(schemeSlug?: string): string[] {
-  // Static suggestions - could be made dynamic from database
+export function getSuggestedQuestions(schemeSlug?: string, language: "en" | "kn" = "en"): string[] {
+  if (language === "kn") {
+    const generalKn = [
+      "ಗೃಹ ಲಕ್ಷ್ಮಿ ಯೋಜನೆಯ ಅರ್ಹತೆ ಮಾನದಂಡಗಳು ಏನು?",
+      "ಅನ್ನ ಭಾಗ್ಯ ಯೋಜನೆಗೆ ಹೇಗೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಬೇಕು?",
+      "ಶಕ್ತಿ ಬಸ್ ಪಾಸ್‌ಗೆ ಯಾವ ದಾಖಲೆಗಳು ಬೇಕು?",
+      "ಯುವ ನಿಧಿ ನಿರುದ್ಯೋಗ ಭತ್ಯೆಗೆ ಯಾರು ಅರ್ಜಿ ಸಲ್ಲಿಸಬಹುದು?",
+      "ವಿದ್ಯಾಸಿರಿ ವಿದ್ಯಾರ್ಥಿವೇತನದ ಆದಾಯ ಮಿತಿ ಎಷ್ಟು?",
+    ];
+
+    const schemeKn: Record<string, string[]> = {
+      "gruha-lakshmi": [
+        "ಮಾಸಿಕ ಪ್ರಯೋಜನದ ಮೊತ್ತ ಎಷ್ಟು?",
+        "ಅರ್ಜಿ ಸಲ್ಲಿಸಲು ಪಡಿತರ ಚೀಟಿ ಬೇಕೇ?",
+        "ಉದ್ಯೋಗಸ್ಥ ಮಹಿಳೆಯರು ಅರ್ಜಿ ಸಲ್ಲಿಸಬಹುದೇ?",
+        "ಆದಾಯ ಮಿತಿ ಎಷ್ಟು?",
+      ],
+      "anna-bhagya": [
+        "ತಿಂಗಳಿಗೆ ಎಷ್ಟು ಅಕ್ಕಿ ಸಿಗುತ್ತದೆ?",
+        "ಯಾವ ಪಡಿತರ ಚೀಟಿ ವಿಧಗಳು ಅರ್ಹ?",
+        "ಪ್ರತ್ಯೇಕವಾಗಿ ಅರ್ಜಿ ಸಲ್ಲಿಸಬೇಕೇ?",
+      ],
+      shakti: [
+        "ಶಕ್ತಿ ಯೋಜನೆಯಡಿ ಯಾವ ಬಸ್‌ಗಳು ಒಳಗೊಂಡಿವೆ?",
+        "ಸ್ಮಾರ್ಟ್ ಕಾರ್ಡ್ ಬೇಕೇ?",
+        "ವಯಸ್ಸಿನ ಮಿತಿ ಇದೆಯೇ?",
+      ],
+      "yuva-nidhi": [
+        "ಮಾಸಿಕ ಭತ್ಯೆ ಮೊತ್ತ ಎಷ್ಟು?",
+        "ಯಾವ ಪದವಿ ವರ್ಷಗಳು ಅರ್ಹ?",
+        "ಅರೆಕಾಲಿಕ ಕೆಲಸ ಮಾಡಿ ಪ್ರಯೋಜನ ಪಡೆಯಬಹುದೇ?",
+      ],
+    };
+
+    if (schemeSlug && schemeKn[schemeSlug]) {
+      return schemeKn[schemeSlug];
+    }
+    return generalKn;
+  }
+
+  // English suggestions (default)
   const generalSuggestions = [
     "What are the eligibility criteria for Gruha Lakshmi?",
     "How do I apply for Anna Bhagya scheme?",

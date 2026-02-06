@@ -5,17 +5,21 @@ import { getSuggestedQuestions } from "@/lib/rag";
 interface SuggestedQuestionsProps {
   schemeSlug?: string;
   onSelect: (question: string) => void;
+  language?: "en" | "kn";
 }
 
 export function SuggestedQuestions({
   schemeSlug,
   onSelect,
+  language = "en",
 }: SuggestedQuestionsProps) {
-  const questions = getSuggestedQuestions(schemeSlug);
+  const questions = getSuggestedQuestions(schemeSlug, language);
 
   return (
     <div className="space-y-3">
-      <p className="text-sm text-gray-600 font-medium">Try asking:</p>
+      <p className="text-sm text-gray-600 font-medium">
+        {language === "kn" ? "ಈ ಪ್ರಶ್ನೆಗಳನ್ನು ಕೇಳಿ:" : "Try asking:"}
+      </p>
       <div className="flex flex-wrap gap-2">
         {questions.map((question, index) => (
           <button

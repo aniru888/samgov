@@ -4,6 +4,8 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageBubble } from "./message-bubble";
 import { SuggestedQuestions } from "./suggested-questions";
 import { Button } from "@/components/ui/button";
+import { useTranslation } from "@/lib/i18n";
+import { useLanguage } from "@/lib/i18n";
 import type { RAGResponse, RAGError, Citation, ConfidenceLevel } from "@/lib/rag";
 import { OFFICIAL_PORTAL_URL } from "@/lib/rag";
 
@@ -29,6 +31,8 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
   const [rateLimitWait, setRateLimitWait] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const { t } = useTranslation();
+  const { language } = useLanguage();
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
@@ -75,7 +79,7 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
       const response = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim() }),
+        body: JSON.stringify({ query: query.trim(), language }),
       });
 
       const result = await response.json();
@@ -97,7 +101,7 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
         const errorMessage: Message = {
           id: `assistant-${Date.now()}`,
           role: "assistant",
-          content: `${ragError.message}\n\nPlease check the official portal: ${ragError.fallback_url || OFFICIAL_PORTAL_URL}`,
+          content: `${ragError.message}\n\n${t("officialPortal")}: ${ragError.fallback_url || OFFICIAL_PORTAL_URL}`,
           confidence: "low",
           timestamp: new Date(),
         };
@@ -120,11 +124,11 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (err) {
       console.error("Chat error:", err);
-      setError("Failed to send message. Please try again.");
+      setError(t("chatSendError"));
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, rateLimitWait]);
+  }, [isLoading, rateLimitWait, language, t]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -154,31 +158,30 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
                 </svg>
               </div>
               <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                Ask about Karnataka schemes
+                {t("chatAskAbout")}
               </h2>
               <p className="text-gray-600 text-sm max-w-md mx-auto">
-                Get answers about eligibility, documents, application process,
-                and more for Karnataka welfare schemes.
+                {t("chatAIGuidance")}
               </p>
             </div>
 
             <SuggestedQuestions
               schemeSlug={schemeSlug}
               onSelect={sendMessage}
+              language={language}
             />
 
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
-              <p className="font-medium mb-1">Important Notice</p>
+              <p className="font-medium mb-1">{t("chatImportantNotice")}</p>
               <p>
-                This is an AI assistant for guidance only. Always verify information
-                on the{" "}
+                {t("chatAIGuidance")}{" "}
                 <a
                   href={OFFICIAL_PORTAL_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline font-medium"
                 >
-                  official Seva Sindhu portal
+                  {t("officialPortal")}
                 </a>
                 .
               </p>
@@ -187,7 +190,7 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
         ) : (
           <div>
             {messages.map((message) => (
-              <MessageBubble key={message.id} {...message} />
+              <MessageBubble key={message.id} {...message} language={language} />
             ))}
             {isLoading && (
               <div className="flex justify-start mb-4">
@@ -198,7 +201,7 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
                       <span className="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
                       <span className="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
                     </div>
-                    <span className="text-sm text-gray-500">Thinking...</span>
+                    <span className="text-sm text-gray-500">{t("chatThinking")}</span>
                   </div>
                 </div>
               </div>
@@ -225,7 +228,7 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span>
-              Please wait {Math.ceil(rateLimitWait / 1000)} seconds before sending another message.
+              {t("chatRateLimitWait").replace("{seconds}", String(Math.ceil(rateLimitWait / 1000)))}
             </span>
           </div>
         </div>
@@ -240,7 +243,7 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
               value={input}
               onChange={handleInputChange}
               onKeyDown={handleKeyDown}
-              placeholder="Ask about eligibility, documents, application process..."
+              placeholder={t("askPlaceholder")}
               disabled={isDisabled}
               rows={1}
               className={`
@@ -274,7 +277,7 @@ export function ChatInterface({ schemeSlug }: ChatInterfaceProps) {
           </Button>
         </form>
         <p className="text-xs text-gray-500 mt-2 text-center">
-          Press Enter to send, Shift+Enter for new line
+          {t("chatEnterToSend")}
         </p>
       </div>
     </div>

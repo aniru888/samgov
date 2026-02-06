@@ -13,7 +13,10 @@ export const runtime = "nodejs";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { query, sessionId } = body;
+    const { query, sessionId, language: rawLanguage } = body;
+
+    // Validate language param (only "en" and "kn" allowed)
+    const language: "en" | "kn" = rawLanguage === "kn" ? "kn" : "en";
 
     // Validate query
     if (!query || typeof query !== "string") {
@@ -45,7 +48,7 @@ export async function POST(request: Request) {
     }
 
     // Process the question through RAG pipeline
-    const result = await askQuestion(query, sessionId);
+    const result = await askQuestion(query, sessionId, language);
 
     // Return appropriate status based on result
     if (!result.success) {

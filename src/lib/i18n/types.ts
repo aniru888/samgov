@@ -52,6 +52,16 @@ export interface TranslationKeys {
   askPlaceholder: string
   suggestedQuestions: string
   sourceLabel: string
+  chatThinking: string
+  chatAskAbout: string
+  chatImportantNotice: string
+  chatAIGuidance: string
+  chatEnterToSend: string
+  chatMachineTranslated: string
+  chatTryAsking: string
+  chatSourcesLabel: string
+  chatRateLimitWait: string
+  chatSendError: string
 
   // Profile
   profileTitle: string
@@ -60,6 +70,29 @@ export interface TranslationKeys {
   settings: string
   language: string
   clearData: string
+  quickLinks: string
+  dataManagement: string
+  clearDataConfirm: string
+  dataCleared: string
+  signInComingSoon: string
+
+  // Schemes detail
+  schemeBenefits: string
+  schemeEligibility: string
+  schemeDepartment: string
+  schemeRejected: string
+  schemeDebugRejection: string
+  schemeApply: string
+  schemeLastVerified: string
+  schemeSource: string
+  schemeOfficialWebsite: string
+  contentEnglishOnly: string
+  schemesSubtitle: string
+  schemesBreadcrumb: string
+
+  // Debugger picker
+  debuggerPickScheme: string
+  debuggerPickSchemeSubtitle: string
 
   // Voice
   startVoice: string

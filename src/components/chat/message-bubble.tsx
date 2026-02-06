@@ -11,6 +11,7 @@ interface MessageBubbleProps {
   confidence?: ConfidenceLevel;
   cached?: boolean;
   timestamp?: Date;
+  language?: "en" | "kn";
 }
 
 export function MessageBubble({
@@ -20,6 +21,7 @@ export function MessageBubble({
   confidence,
   cached,
   timestamp,
+  language = "en",
 }: MessageBubbleProps) {
   const isUser = role === "user";
 
@@ -50,13 +52,18 @@ export function MessageBubble({
         {/* Assistant-specific metadata */}
         {!isUser && (confidence || citations?.length) && (
           <div className="px-4 pb-3 space-y-3">
-            {/* Confidence indicator */}
+            {/* Confidence indicator + Kannada badge */}
             {confidence && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <ConfidenceIndicator confidence={confidence} />
                 {cached && (
                   <span className="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded-full">
                     Cached
+                  </span>
+                )}
+                {language === "kn" && (
+                  <span className="text-xs text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full">
+                    AI ಕನ್ನಡ
                   </span>
                 )}
               </div>
@@ -65,7 +72,9 @@ export function MessageBubble({
             {/* Citations */}
             {citations && citations.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs text-gray-500 font-medium">Sources:</p>
+                <p className="text-xs text-gray-500 font-medium">
+                  {language === "kn" ? "ಮೂಲಗಳು:" : "Sources:"}
+                </p>
                 <div className="space-y-1">
                   {citations.map((citation, index) => (
                     <CitationCard

@@ -1,3 +1,15 @@
+export interface SchemeSource {
+  url: string;
+  type: "official" | "secondary";
+  title: string;
+  used_for: string;
+}
+
+export interface SchemeHelpline {
+  phone?: string[];
+  email?: string;
+}
+
 export interface Scheme {
   id: string;
   slug: string;
@@ -9,6 +21,8 @@ export interface Scheme {
   application_url: string | null;
   official_source_url: string | null;
   last_verified_at: string | null;
+  sources: SchemeSource[] | null;
+  helpline: SchemeHelpline | null;
   created_at: string;
   updated_at: string;
 }
