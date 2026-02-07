@@ -98,7 +98,7 @@ describe("ResultStep", () => {
       />
     )
 
-    expect(screen.getByText("Required Documents")).toBeInTheDocument()
+    expect(screen.getByText("Documents You Will Need")).toBeInTheDocument()
     expect(screen.getByText("Aadhaar Card")).toBeInTheDocument()
     expect(screen.getByText("Ration Card")).toBeInTheDocument()
   })
@@ -160,6 +160,44 @@ describe("ResultStep", () => {
     fireEvent.click(resetButton)
 
     expect(mockOnReset).toHaveBeenCalled()
+  })
+
+  it("shows Apply Now button when schemeApplicationUrl is provided", () => {
+    renderWithProvider(
+      <ResultStep
+        result={eligibleResult}
+        schemeName="Gruha Lakshmi"
+        schemeSlug="gruha-lakshmi"
+        schemeApplicationUrl="https://sevasindhu.karnataka.gov.in/gruha-lakshmi"
+        onReset={mockOnReset}
+      />
+    )
+
+    const applyLink = screen.getByRole("link", { name: /apply now/i })
+    expect(applyLink).toHaveAttribute("href", "https://sevasindhu.karnataka.gov.in/gruha-lakshmi")
+    expect(applyLink).toHaveAttribute("target", "_blank")
+  })
+
+  it("shows scheme DB documents as fallback when tree has none", () => {
+    const resultWithoutDocs: ResultNode = {
+      type: "result",
+      status: "eligible",
+      reason_en: "You may be eligible.",
+    }
+
+    renderWithProvider(
+      <ResultStep
+        result={resultWithoutDocs}
+        schemeName="Gruha Lakshmi"
+        schemeSlug="gruha-lakshmi"
+        schemeRequiredDocuments={["Income Certificate", "Caste Certificate"]}
+        onReset={mockOnReset}
+      />
+    )
+
+    expect(screen.getByText("Documents You Will Need")).toBeInTheDocument()
+    expect(screen.getByText("Income Certificate")).toBeInTheDocument()
+    expect(screen.getByText("Caste Certificate")).toBeInTheDocument()
   })
 
   it("has link to scheme details", () => {

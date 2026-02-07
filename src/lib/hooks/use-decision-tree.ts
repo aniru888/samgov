@@ -9,6 +9,8 @@ interface UseDecisionTreeResult {
   tree: DecisionTree | null
   treeId: string | null
   schemeId: string | null
+  schemeApplicationUrl: string | null
+  schemeRequiredDocuments: string[] | null
   loading: boolean
   error: Error | null
 }
@@ -21,6 +23,8 @@ export function useDecisionTree(schemeSlug: string): UseDecisionTreeResult {
   const [tree, setTree] = useState<DecisionTree | null>(null)
   const [treeId, setTreeId] = useState<string | null>(null)
   const [schemeId, setSchemeId] = useState<string | null>(null)
+  const [schemeApplicationUrl, setSchemeApplicationUrl] = useState<string | null>(null)
+  const [schemeRequiredDocuments, setSchemeRequiredDocuments] = useState<string[] | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<Error | null>(null)
 
@@ -37,7 +41,7 @@ export function useDecisionTree(schemeSlug: string): UseDecisionTreeResult {
         // First, get the scheme ID from the slug
         const { data: scheme, error: schemeError } = await supabase
           .from("schemes")
-          .select("id")
+          .select("id, application_url, required_documents")
           .eq("slug", schemeSlug)
           .single()
 
@@ -74,6 +78,8 @@ export function useDecisionTree(schemeSlug: string): UseDecisionTreeResult {
         setTree(row.tree)
         setTreeId(row.id)
         setSchemeId(scheme.id)
+        setSchemeApplicationUrl(scheme.application_url || null)
+        setSchemeRequiredDocuments(scheme.required_documents || null)
       } catch (err) {
         if (!cancelled) {
           setError(err instanceof Error ? err : new Error("Failed to load decision tree"))
@@ -92,5 +98,5 @@ export function useDecisionTree(schemeSlug: string): UseDecisionTreeResult {
     }
   }, [schemeSlug])
 
-  return { tree, treeId, schemeId, loading, error }
+  return { tree, treeId, schemeId, schemeApplicationUrl, schemeRequiredDocuments, loading, error }
 }

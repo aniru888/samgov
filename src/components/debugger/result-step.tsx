@@ -13,6 +13,8 @@ interface ResultStepProps {
   result: ResultNode
   schemeName: string
   schemeSlug: string
+  schemeApplicationUrl?: string | null
+  schemeRequiredDocuments?: string[] | null
   onReset: () => void
   className?: string
 }
@@ -58,6 +60,8 @@ export function ResultStep({
   result,
   schemeName: _schemeName, // Reserved for future use
   schemeSlug,
+  schemeApplicationUrl,
+  schemeRequiredDocuments,
   onReset,
   className,
 }: ResultStepProps) {
@@ -127,23 +131,32 @@ export function ResultStep({
         </Card>
       )}
 
-      {/* Required Documents */}
-      {result.documents && result.documents.length > 0 && (
-        <Card className="mb-4">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base">
-              {language === "kn" ? "ಅಗತ್ಯ ದಾಖಲೆಗಳು" : "Required Documents"}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ul className="list-disc list-inside space-y-1 text-muted-foreground">
-              {result.documents.map((doc, index) => (
-                <li key={index} className="text-base">{doc}</li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      )}
+      {/* Required Documents - from tree node or scheme DB */}
+      {(() => {
+        const docs = result.documents && result.documents.length > 0
+          ? result.documents
+          : schemeRequiredDocuments;
+        if (!docs || docs.length === 0) return null;
+        return (
+          <Card className="mb-4">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-base">
+                {language === "kn" ? "ಅಗತ್ಯ ದಾಖಲೆಗಳು" : "Documents You Will Need"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="space-y-1.5">
+                {docs.map((doc, index) => (
+                  <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
+                    <span className="text-teal-500 mt-0.5 shrink-0">&#10003;</span>
+                    {doc}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        );
+      })()}
 
       {/* Important Disclaimer - CRITICAL */}
       <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
@@ -174,7 +187,25 @@ export function ResultStep({
 
       {/* Actions */}
       <div className="space-y-3 mt-auto">
-        <Button asChild className="w-full h-14">
+        {/* Scheme-specific apply link (if available) */}
+        {schemeApplicationUrl && (
+          <Button asChild className="w-full h-14">
+            <a
+              href={schemeApplicationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {language === "kn" ? "ಅರ್ಜಿ ಸಲ್ಲಿಸಿ" : "Apply Now"} →
+            </a>
+          </Button>
+        )}
+
+        {/* Generic portal link */}
+        <Button
+          asChild
+          variant={schemeApplicationUrl ? "outline" : "default"}
+          className={schemeApplicationUrl ? "w-full h-12" : "w-full h-14"}
+        >
           <a
             href={disclaimer.officialPortalUrl}
             target="_blank"

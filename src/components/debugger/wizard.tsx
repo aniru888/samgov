@@ -17,7 +17,7 @@ interface WizardProps {
 
 export function Wizard({ schemeSlug, schemeName, className }: WizardProps) {
   const { t, language } = useTranslation()
-  const { tree, treeId, schemeId, loading, error: treeError } = useDecisionTree(schemeSlug)
+  const { tree, treeId, schemeId, schemeApplicationUrl, schemeRequiredDocuments, loading, error: treeError } = useDecisionTree(schemeSlug)
   const {
     currentQuestion,
     result,
@@ -114,6 +114,8 @@ export function Wizard({ schemeSlug, schemeName, className }: WizardProps) {
             result={result}
             schemeName={schemeName}
             schemeSlug={schemeSlug}
+            schemeApplicationUrl={schemeApplicationUrl}
+            schemeRequiredDocuments={schemeRequiredDocuments}
             onReset={reset}
           />
         )}
