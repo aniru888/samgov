@@ -112,10 +112,15 @@ export async function recommendSchemes(
   const queryEmbedding = await generateQueryEmbedding(query);
 
   // Call scheme_recommend RPC
+  // pgvector expects text format "[0.1,0.2,...]" via PostgREST
+  const embeddingStr = `[${queryEmbedding.join(",")}]`;
+
   const { data, error } = await supabase.rpc("scheme_recommend", {
-    query_embedding: queryEmbedding,
+    query_embedding: embeddingStr,
     match_count: limit,
-    similarity_threshold: 0.55,
+    // Cohere asymmetric search (search_query vs search_document) produces
+    // lower similarity scores than symmetric. 0.45 is appropriate threshold.
+    similarity_threshold: 0.45,
     filter_category: filters?.category || null,
     filter_level: filters?.level || null,
   });

@@ -27,10 +27,14 @@ CREATE INDEX IF NOT EXISTS idx_schemes_active
 ON schemes (is_active);
 
 -- Recommendation search function
+-- NOTE: Cohere asymmetric search (search_query vs search_document input_type)
+-- produces lower similarity scores than symmetric comparisons.
+-- Threshold 0.45 is appropriate for this setup (tested: education queries
+-- scored 0.49-0.55 against education schemes).
 CREATE OR REPLACE FUNCTION scheme_recommend(
   query_embedding VECTOR(1024),
   match_count INT DEFAULT 10,
-  similarity_threshold FLOAT DEFAULT 0.55,
+  similarity_threshold FLOAT DEFAULT 0.45,
   filter_category TEXT DEFAULT NULL,
   filter_level TEXT DEFAULT NULL
 )
@@ -45,31 +49,35 @@ RETURNS TABLE (
   benefits_summary TEXT,
   eligibility_summary TEXT,
   application_url TEXT,
+  official_source_url TEXT,
   tags TEXT[],
   scheme_level TEXT,
   data_source TEXT,
-  benefits_type TEXT,
+  last_verified_at TIMESTAMPTZ,
   similarity_score FLOAT
 )
 LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path TO 'public'
 AS $$
 BEGIN
   RETURN QUERY
   SELECT
     s.id,
-    s.slug::TEXT,
-    s.name_en::TEXT,
-    s.name_kn::TEXT,
-    s.department::TEXT,
-    s.category::TEXT,
-    s.target_group::TEXT,
-    s.benefits_summary::TEXT,
-    s.eligibility_summary::TEXT,
-    s.application_url::TEXT,
+    s.slug,
+    s.name_en,
+    s.name_kn,
+    s.department,
+    s.category,
+    s.target_group,
+    s.benefits_summary,
+    s.eligibility_summary,
+    s.application_url,
+    s.official_source_url,
     s.tags,
-    s.scheme_level::TEXT,
-    s.data_source::TEXT,
-    s.benefits_type::TEXT,
+    s.scheme_level,
+    s.data_source,
+    s.last_verified_at,
     (1 - (s.scheme_embedding <=> query_embedding))::FLOAT AS similarity_score
   FROM schemes s
   WHERE s.is_active = true
