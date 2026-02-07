@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
 import type { RecommendationResult } from "@/lib/recommend";
@@ -38,6 +39,39 @@ function RelevanceBadge({
     <span className="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-600">
       {t("exploreMayBeRelevant")}
     </span>
+  );
+}
+
+function DocumentsSection({ documents }: { documents: string[] }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="mb-3">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-1 text-xs font-medium text-gray-600 hover:text-gray-800 transition-colors"
+      >
+        <svg
+          className={`w-3.5 h-3.5 transition-transform ${isOpen ? "rotate-90" : ""}`}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+        Documents needed ({documents.length})
+      </button>
+      {isOpen && (
+        <ul className="mt-1.5 ml-5 space-y-0.5">
+          {documents.map((doc) => (
+            <li key={doc} className="text-xs text-gray-600 flex items-start gap-1.5">
+              <span className="text-teal-500 mt-0.5 shrink-0">&#10003;</span>
+              {doc}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -106,6 +140,11 @@ export function RecommendationCard({ result, hasDecisionTree }: RecommendationCa
             </span>
           ))}
         </div>
+      )}
+
+      {/* Required Documents */}
+      {scheme.required_documents && scheme.required_documents.length > 0 && (
+        <DocumentsSection documents={scheme.required_documents} />
       )}
 
       {/* Actions */}

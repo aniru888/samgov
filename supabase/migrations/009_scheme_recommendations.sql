@@ -54,6 +54,7 @@ RETURNS TABLE (
   scheme_level TEXT,
   data_source TEXT,
   last_verified_at TIMESTAMPTZ,
+  required_documents TEXT[],
   similarity_score FLOAT
 )
 LANGUAGE plpgsql
@@ -78,6 +79,7 @@ BEGIN
     s.scheme_level,
     s.data_source,
     s.last_verified_at,
+    s.required_documents,
     (1 - (s.scheme_embedding <=> query_embedding))::FLOAT AS similarity_score
   FROM schemes s
   WHERE s.is_active = true

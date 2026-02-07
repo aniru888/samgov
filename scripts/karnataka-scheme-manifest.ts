@@ -21,6 +21,7 @@ export interface SchemeManifestEntry {
   benefits_type: string;
   scheme_level: "state" | "central" | "both";
   data_source: "manual" | "myscheme_hf";
+  required_documents?: string[];
 }
 
 /**

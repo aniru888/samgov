@@ -23,6 +23,7 @@ export interface RecommendedScheme {
   scheme_level: string | null;
   data_source: string | null;
   last_verified_at: string | null;
+  required_documents: string[] | null;
 }
 
 export interface RecommendationResult {
@@ -153,6 +154,7 @@ export async function recommendSchemes(
       scheme_level: row.scheme_level as string | null,
       data_source: row.data_source as string | null,
       last_verified_at: row.last_verified_at as string | null,
+      required_documents: row.required_documents as string[] | null,
     },
     similarity_score: row.similarity_score as number,
     match_reason: generateMatchReason(
@@ -173,6 +175,7 @@ export async function recommendSchemes(
         scheme_level: row.scheme_level as string | null,
         data_source: row.data_source as string | null,
         last_verified_at: row.last_verified_at as string | null,
+        required_documents: row.required_documents as string[] | null,
       },
       language
     ),
@@ -189,7 +192,7 @@ export async function getSchemesByCategory(): Promise<
 
   const { data, error } = await supabase
     .from("schemes")
-    .select("id, slug, name_en, name_kn, department, category, target_group, benefits_summary, eligibility_summary, application_url, official_source_url, tags, scheme_level, data_source, last_verified_at")
+    .select("id, slug, name_en, name_kn, department, category, target_group, benefits_summary, eligibility_summary, application_url, official_source_url, tags, scheme_level, data_source, last_verified_at, required_documents")
     .eq("is_active", true)
     .order("name_en");
 
