@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import Link from "next/link";
 import { useTranslation, useLanguage } from "@/lib/i18n";
-import { ProblemInput, CategoryFilters, RecommendationResults } from "@/components/recommend";
+import { ProblemInput, CategoryFilters, RecommendationResults, LifeEventCards } from "@/components/recommend";
 import type { RecommendationResult } from "@/lib/recommend";
 
 interface ExploreClientProps {
@@ -81,6 +81,13 @@ export function ExploreClient({ decisionTreeSlugs }: ExploreClientProps) {
         <section className="mb-6">
           <ProblemInput onSubmit={handleSearch} isLoading={isLoading} />
         </section>
+
+        {/* Life event quick-picks (shown before search) */}
+        {!hasSearched && (
+          <section className="mb-6">
+            <LifeEventCards onSelect={handleSearch} disabled={isLoading} />
+          </section>
+        )}
 
         {/* Category filters */}
         <section className="mb-6">
