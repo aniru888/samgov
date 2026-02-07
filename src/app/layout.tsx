@@ -4,6 +4,7 @@ import "./globals.css";
 import { DisclaimerBanner } from "@/components/disclaimer-banner";
 import { LanguageProvider } from "@/lib/i18n";
 import { Header, BottomNav } from "@/components/layout";
+import { PWARegister } from "@/components/pwa-register";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +27,7 @@ export const metadata: Metadata = {
     "eligibility",
     "government benefits",
   ],
+  manifest: "/manifest.json",
 };
 
 export const viewport: Viewport = {
@@ -51,6 +53,7 @@ export default function RootLayout({
             {children}
           </div>
           <BottomNav />
+          <PWARegister />
         </LanguageProvider>
       </body>
     </html>
