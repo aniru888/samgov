@@ -213,4 +213,38 @@ describe("ResultStep", () => {
     const detailsLink = screen.getByRole("link", { name: /scheme details/i })
     expect(detailsLink).toHaveAttribute("href", "/schemes/gruha-lakshmi")
   })
+
+  it("has WhatsApp share button with correct link", () => {
+    renderWithProvider(
+      <ResultStep
+        result={eligibleResult}
+        schemeName="Gruha Lakshmi"
+        schemeSlug="gruha-lakshmi"
+        onReset={mockOnReset}
+      />
+    )
+
+    const shareLink = screen.getByRole("link", { name: /share via whatsapp/i })
+    expect(shareLink).toHaveAttribute("target", "_blank")
+    const href = shareLink.getAttribute("href") || ""
+    expect(href).toContain("https://wa.me/?text=")
+    expect(href).toContain("Gruha%20Lakshmi")
+    expect(href).toContain("Not%20a%20government%20website")
+  })
+
+  it("includes application URL in WhatsApp share when available", () => {
+    renderWithProvider(
+      <ResultStep
+        result={eligibleResult}
+        schemeName="Gruha Lakshmi"
+        schemeSlug="gruha-lakshmi"
+        schemeApplicationUrl="https://example.gov.in/apply"
+        onReset={mockOnReset}
+      />
+    )
+
+    const shareLink = screen.getByRole("link", { name: /share via whatsapp/i })
+    const href = shareLink.getAttribute("href") || ""
+    expect(href).toContain("https%3A%2F%2Fexample.gov.in%2Fapply")
+  })
 })
