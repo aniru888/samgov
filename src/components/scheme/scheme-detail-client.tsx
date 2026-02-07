@@ -132,6 +132,39 @@ export function SchemeDetailClient({ scheme, hasDecisionTree = false }: SchemeDe
           </section>
         )}
 
+        {/* Find Nearest CSC */}
+        <section className="bg-white rounded-lg shadow p-6 mb-6">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <h2 className="text-lg font-semibold text-gray-900 mb-1">
+                {language === "kn" ? "ಸಮೀಪದ CSC ಹುಡುಕಿ" : "Find Nearest CSC"}
+              </h2>
+              <p className="text-sm text-gray-600 mb-3">
+                {language === "kn"
+                  ? "ನಿಮ್ಮ ಹತ್ತಿರದ ಸಾಮಾನ್ಯ ಸೇವಾ ಕೇಂದ್ರದಲ್ಲಿ ಅರ್ಜಿ ಸಲ್ಲಿಸಲು ಸಹಾಯ ಪಡೆಯಿರಿ."
+                  : "Get help applying at your nearest Common Service Centre."}
+              </p>
+              <a
+                href="https://locator.csccloud.in/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center text-sm font-medium text-teal-600 hover:text-teal-700"
+              >
+                {language === "kn" ? "CSC ಲೊಕೇಟರ್ ತೆರೆಯಿರಿ" : "Open CSC Locator"}
+                <svg className="ml-1 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </section>
+
         {/* Debug Eligibility CTA - only show when decision tree exists */}
         {hasDecisionTree && (
           <section className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
