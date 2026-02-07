@@ -40,11 +40,33 @@ export function useWizard(
   const [state, setState] = useState<WizardState | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  const storageKey = schemeId && treeId
+    ? `samgov_wizard_${schemeId}_${treeId}`
+    : null
+
   // Initialize wizard when tree becomes available
-  // This is an intentional synchronous effect for initialization
+  // Try to restore from sessionStorage first (survives page refresh)
   useEffect(() => {
     if (tree && schemeId && treeId && !state) {
       try {
+        // Try to restore saved progress
+        if (storageKey) {
+          try {
+            const saved = sessionStorage.getItem(storageKey)
+            if (saved) {
+              const parsed = JSON.parse(saved) as WizardState
+              // Verify the saved state matches current tree
+              if (parsed.schemeId === schemeId && parsed.treeId === treeId) {
+                setState(parsed)
+                setError(null)
+                return
+              }
+            }
+          } catch {
+            // Corrupted storage, ignore and start fresh
+          }
+        }
+
         const initialState = initializeWizard(schemeId, treeId, tree)
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setState(initialState)
@@ -57,7 +79,18 @@ export function useWizard(
         }
       }
     }
-  }, [tree, schemeId, treeId, state])
+  }, [tree, schemeId, treeId, state, storageKey])
+
+  // Persist state to sessionStorage on every change
+  useEffect(() => {
+    if (state && storageKey) {
+      try {
+        sessionStorage.setItem(storageKey, JSON.stringify(state))
+      } catch {
+        // Storage full or unavailable, silently ignore
+      }
+    }
+  }, [state, storageKey])
 
   // Get current question (null if at result)
   const currentQuestion = useMemo(() => {
@@ -131,6 +164,10 @@ export function useWizard(
       const newState = resetWizard(tree, state)
       setState(newState)
       setError(null)
+      // Clear saved progress on reset
+      if (storageKey) {
+        try { sessionStorage.removeItem(storageKey) } catch { /* ignore */ }
+      }
     } catch (err) {
       if (err instanceof TraversalError) {
         setError(err.message)
@@ -138,7 +175,7 @@ export function useWizard(
         setError("An unexpected error occurred")
       }
     }
-  }, [tree, state])
+  }, [tree, state, storageKey])
 
   return {
     state,
