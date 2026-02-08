@@ -56,21 +56,22 @@ export function LanguageProvider({ children, defaultLanguage }: LanguageProvider
     }
   }, [])
 
+  const effectiveLanguage = isHydrated ? language : (defaultLanguage ?? "en")
+
   const translate = React.useCallback(
     (key: TranslationKey, params?: Record<string, string | number>) => {
-      return t(key, language, params)
+      return t(key, effectiveLanguage, params)
     },
-    [language]
+    [effectiveLanguage]
   )
 
-  // Prevent hydration mismatch by using default until hydrated
   const value = React.useMemo(
     () => ({
-      language: isHydrated ? language : (defaultLanguage ?? "en"),
+      language: effectiveLanguage,
       setLanguage,
       t: translate,
     }),
-    [language, setLanguage, translate, isHydrated, defaultLanguage]
+    [effectiveLanguage, setLanguage, translate]
   )
 
   return (
