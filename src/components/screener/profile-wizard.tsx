@@ -348,7 +348,7 @@ function ScreenerResults({
                       rel="noopener noreferrer"
                       className="text-xs font-medium text-gray-500 hover:text-gray-700 ml-auto"
                     >
-                      {t("schemeApply")} &nearr;
+                      {t("schemeApply")}
                     </a>
                   )}
                 </div>
