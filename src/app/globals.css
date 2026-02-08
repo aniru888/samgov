@@ -204,3 +204,107 @@
     padding-top: env(safe-area-inset-top, 0px);
   }
 }
+
+/* Print styles - Clean A4 output for CSC operators */
+@media print {
+  /* Hide interactive elements */
+  .no-print,
+  header,
+  nav,
+  footer,
+  .bottom-nav,
+  button:not(.print-keep),
+  [role="navigation"],
+  [data-disclaimer-banner] {
+    display: none !important;
+  }
+
+  /* Reset page for A4 */
+  @page {
+    size: A4;
+    margin: 15mm;
+  }
+
+  html {
+    font-size: 100%;
+  }
+
+  body {
+    background: white !important;
+    color: black !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove shadows and backgrounds for clean print */
+  .bg-white, .bg-gray-50, .bg-background {
+    background: white !important;
+    box-shadow: none !important;
+  }
+
+  /* Keep status colors (they're important for result meaning) */
+  .bg-green-50 { background: #f0fdf4 !important; }
+  .bg-yellow-50 { background: #fefce8 !important; }
+  .bg-red-50 { background: #fef2f2 !important; }
+
+  /* Ensure text is black for readability */
+  .text-muted-foreground,
+  .text-gray-500,
+  .text-gray-600,
+  .text-gray-700 {
+    color: #1f2937 !important;
+  }
+
+  /* Keep card borders visible */
+  .rounded-lg, .rounded-xl, .rounded-2xl {
+    border: 1px solid #d1d5db !important;
+  }
+
+  /* Links show URL in parentheses */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.75em;
+    color: #4b5563;
+    word-break: break-all;
+  }
+
+  /* Don't show URL for internal links or icon-only links */
+  a[href^="/"]::after,
+  a > svg + span ~ ::after,
+  a.no-print-url::after {
+    content: none !important;
+  }
+
+  /* Show print-only elements */
+  .print-only {
+    display: block !important;
+  }
+
+  /* QR code section for print */
+  .print-qr-section {
+    display: flex !important;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1rem;
+    page-break-inside: avoid;
+  }
+
+  /* Print footer */
+  .print-footer {
+    display: block !important;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #d1d5db;
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-align: center;
+  }
+
+  /* Avoid page breaks inside cards */
+  .mb-4, .mb-6, section {
+    page-break-inside: avoid;
+  }
+}

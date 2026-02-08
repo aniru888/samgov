@@ -4,6 +4,8 @@ import Link from "next/link"
 import { useTranslation } from "@/lib/i18n"
 import type { Scheme } from "@/types/scheme"
 import { DocumentList } from "@/components/documents/document-guide"
+import { PrintButton } from "@/components/ui/print-button"
+import { QRCodeDisplay } from "@/components/ui/qr-code"
 
 interface SchemeDetailClientProps {
   scheme: Scheme
@@ -39,29 +41,32 @@ export function SchemeDetailClient({ scheme, hasDecisionTree = false }: SchemeDe
                 <p className="text-xl text-gray-600">{secondaryName}</p>
               )}
             </div>
-            {scheme.application_url && (
-              <a
-                href={scheme.application_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                {t("schemeApply")}
-                <svg
-                  className="ml-2 h-4 w-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
+            <div className="flex gap-3 items-center">
+              {scheme.application_url && (
+                <a
+                  href={scheme.application_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="no-print inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                  />
-                </svg>
-              </a>
-            )}
+                  {t("schemeApply")}
+                  <svg
+                    className="ml-2 h-4 w-4"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    />
+                  </svg>
+                </a>
+              )}
+              <PrintButton className="w-auto flex-none" />
+            </div>
           </div>
 
           {scheme.department && (
@@ -190,6 +195,31 @@ export function SchemeDetailClient({ scheme, hasDecisionTree = false }: SchemeDe
             </Link>
           </section>
         )}
+
+        {/* Print-only: QR code for application URL */}
+        {scheme.application_url && (
+          <div className="hidden print-qr-section" style={{ display: "none" }}>
+            <QRCodeDisplay url={scheme.application_url} size={96} />
+            <div>
+              <p className="text-sm font-medium">
+                {language === "kn" ? "ಅರ್ಜಿ ಸಲ್ಲಿಸಲು ಸ್ಕ್ಯಾನ್ ಮಾಡಿ" : "Scan to apply online"}
+              </p>
+              <p className="text-xs text-gray-500 break-all">{scheme.application_url}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Print-only footer */}
+        <div className="hidden print-footer" style={{ display: "none" }}>
+          <p>
+            {language === "kn"
+              ? "SamGov ಮೂಲಕ ರಚಿಸಲಾಗಿದೆ • ಇದು ಸರ್ಕಾರದ ವೆಬ್‌ಸೈಟ್ ಅಲ್ಲ • ಮಾಹಿತಿ ಮಾರ್ಗದರ್ಶನಕ್ಕೆ ಮಾತ್ರ"
+              : "Generated via SamGov • NOT a government website • For guidance only"}
+          </p>
+          <p className="mt-1">
+            {language === "kn" ? "ಮುದ್ರಿಸಿದ ದಿನಾಂಕ" : "Printed"}: {new Date().toLocaleDateString(language === "kn" ? "kn-IN" : "en-IN")}
+          </p>
+        </div>
 
         {/* Footer Info */}
         <footer className="text-center text-sm text-gray-500 space-y-2">

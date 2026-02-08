@@ -128,7 +128,8 @@ describe("ResultStep", () => {
     )
 
     expect(screen.getByText("Important")).toBeInTheDocument()
-    expect(screen.getByText(/NOT a government website/i)).toBeInTheDocument()
+    // Disclaimer card text (not print footer)
+    expect(screen.getByText(/This is NOT a government website/i)).toBeInTheDocument()
   })
 
   it("has link to official portal", () => {
@@ -224,7 +225,7 @@ describe("ResultStep", () => {
       />
     )
 
-    const shareLink = screen.getByRole("link", { name: /share via whatsapp/i })
+    const shareLink = screen.getByRole("link", { name: /whatsapp/i })
     expect(shareLink).toHaveAttribute("target", "_blank")
     const href = shareLink.getAttribute("href") || ""
     expect(href).toContain("https://wa.me/?text=")
@@ -243,7 +244,7 @@ describe("ResultStep", () => {
       />
     )
 
-    const shareLink = screen.getByRole("link", { name: /share via whatsapp/i })
+    const shareLink = screen.getByRole("link", { name: /whatsapp/i })
     const href = shareLink.getAttribute("href") || ""
     expect(href).toContain("https%3A%2F%2Fexample.gov.in%2Fapply")
   })
