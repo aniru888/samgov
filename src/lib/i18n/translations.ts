@@ -381,13 +381,15 @@ export const translations: Record<"en" | "kn", TranslationKeys> = {
  * Get translation for a key in the specified language
  */
 export function t(key: keyof TranslationKeys, lang: "en" | "kn", params?: Record<string, string | number>): string {
-  let text = translations[lang]?.[key] ?? translations["en"]?.[key] ?? key
-
-  if (params) {
-    Object.entries(params).forEach(([paramKey, value]) => {
-      text = text.replace(`{${paramKey}}`, String(value))
-    })
+  try {
+    let text: string = translations?.[lang]?.[key] ?? translations?.["en"]?.[key] ?? String(key)
+    if (params && typeof text === "string") {
+      for (const [paramKey, value] of Object.entries(params)) {
+        text = text.replace(`{${paramKey}}`, String(value))
+      }
+    }
+    return text
+  } catch {
+    return String(key)
   }
-
-  return text
 }

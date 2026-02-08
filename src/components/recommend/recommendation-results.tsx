@@ -75,7 +75,7 @@ export function RecommendationResults({
     <div className="space-y-4">
       {/* Count */}
       <p className="text-sm text-gray-600">
-        {t("exploreFound").replace("{count}", String(results.length))}
+        {t("exploreFound", { count: String(results.length) })}
       </p>
 
       {/* Disclaimer */}
