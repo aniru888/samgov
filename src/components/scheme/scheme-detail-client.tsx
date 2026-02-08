@@ -3,16 +3,19 @@
 import Link from "next/link"
 import { useTranslation } from "@/lib/i18n"
 import type { Scheme } from "@/types/scheme"
+import type { FAQItem } from "@/lib/rules-engine/faq-extractor"
 import { DocumentList } from "@/components/documents/document-guide"
 import { PrintButton } from "@/components/ui/print-button"
 import { QRCodeDisplay } from "@/components/ui/qr-code"
+import { SchemeFAQ } from "./scheme-faq"
 
 interface SchemeDetailClientProps {
   scheme: Scheme
   hasDecisionTree?: boolean
+  faqs?: FAQItem[]
 }
 
-export function SchemeDetailClient({ scheme, hasDecisionTree = false }: SchemeDetailClientProps) {
+export function SchemeDetailClient({ scheme, hasDecisionTree = false, faqs = [] }: SchemeDetailClientProps) {
   const { t, language } = useTranslation()
   const displayName = language === "kn" && scheme.name_kn ? scheme.name_kn : scheme.name_en
   const secondaryName = language === "kn" && scheme.name_kn ? scheme.name_en : scheme.name_kn
@@ -177,6 +180,11 @@ export function SchemeDetailClient({ scheme, hasDecisionTree = false }: SchemeDe
             </div>
           </div>
         </section>
+
+        {/* FAQ Section - extracted from decision tree */}
+        {faqs.length > 0 && (
+          <SchemeFAQ faqs={faqs} schemeName={displayName} />
+        )}
 
         {/* Debug Eligibility CTA - only show when decision tree exists */}
         {hasDecisionTree && (

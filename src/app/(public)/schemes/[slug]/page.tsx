@@ -3,6 +3,8 @@ import { Scheme } from "@/types/scheme";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { SchemeDetailClient } from "@/components/scheme";
+import { extractFAQFromTree, generateFAQJsonLd } from "@/lib/rules-engine/faq-extractor";
+import type { DecisionTree } from "@/lib/rules-engine/types";
 
 // Revalidate every hour
 export const revalidate = 3600;
@@ -27,17 +29,22 @@ async function getScheme(slug: string): Promise<Scheme | null> {
   return data;
 }
 
-async function hasDecisionTree(schemeId: string): Promise<boolean> {
+async function getDecisionTree(
+  schemeId: string
+): Promise<{ hasTree: boolean; tree: DecisionTree | null }> {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("decision_trees")
-    .select("id")
+    .select("id, tree")
     .eq("scheme_id", schemeId)
     .eq("is_active", true)
     .limit(1);
 
-  if (error) return false;
-  return (data?.length ?? 0) > 0;
+  if (error || !data || data.length === 0) {
+    return { hasTree: false, tree: null };
+  }
+
+  return { hasTree: true, tree: data[0].tree as DecisionTree };
 }
 
 export async function generateMetadata({
@@ -68,7 +75,25 @@ export default async function SchemePage({ params }: PageProps) {
     notFound();
   }
 
-  const hasTree = await hasDecisionTree(scheme.id);
+  const { hasTree, tree } = await getDecisionTree(scheme.id);
 
-  return <SchemeDetailClient scheme={scheme} hasDecisionTree={hasTree} />;
+  // Extract FAQs from decision tree for SEO
+  const faqs = tree ? extractFAQFromTree(tree, scheme.name_en) : [];
+  const faqJsonLd = faqs.length > 0 ? generateFAQJsonLd(faqs) : null;
+
+  return (
+    <>
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
+      <SchemeDetailClient
+        scheme={scheme}
+        hasDecisionTree={hasTree}
+        faqs={faqs}
+      />
+    </>
+  );
 }
