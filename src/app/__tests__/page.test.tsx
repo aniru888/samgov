@@ -1,78 +1,72 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { LanguageProvider } from '@/lib/i18n'
 import Home from '../page'
 
+function renderWithProvider(ui: React.ReactElement) {
+  return render(<LanguageProvider defaultLanguage="en">{ui}</LanguageProvider>)
+}
+
 describe('Home Page', () => {
-  it('renders the main heading', () => {
-    render(<Home />)
+  it('renders the main heading (i18n)', () => {
+    renderWithProvider(<Home />)
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Karnataka Welfare Scheme Guide/i)
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Find welfare schemes you may qualify for/i)
   })
 
-  it('renders description text', () => {
-    render(<Home />)
+  it('renders hero subtitle', () => {
+    renderWithProvider(<Home />)
 
-    expect(screen.getByText(/Understand government welfare schemes/i)).toBeInTheDocument()
+    expect(screen.getByText(/Simple tools to understand/i)).toBeInTheDocument()
   })
 
-  it('has a link to browse schemes', () => {
-    render(<Home />)
+  it('has a link to explore schemes', () => {
+    renderWithProvider(<Home />)
 
-    const browseLink = screen.getByRole('link', { name: /browse schemes/i })
-    expect(browseLink).toHaveAttribute('href', '/schemes')
+    const exploreLink = screen.getByRole('link', { name: /Find Schemes For You/i })
+    expect(exploreLink).toHaveAttribute('href', '/explore')
   })
 
-  it('has a link to ask questions', () => {
-    render(<Home />)
+  it('has links to browse schemes', () => {
+    renderWithProvider(<Home />)
 
-    const askLink = screen.getByRole('link', { name: /ask a question/i })
-    expect(askLink).toHaveAttribute('href', '/ask')
+    const browseLinks = screen.getAllByRole('link', { name: /Browse Schemes/i })
+    expect(browseLinks.length).toBeGreaterThanOrEqual(1)
+    expect(browseLinks[0]).toHaveAttribute('href', '/schemes')
   })
 
-  it('renders feature cards section', () => {
-    render(<Home />)
+  it('has links to ask questions', () => {
+    renderWithProvider(<Home />)
 
-    expect(screen.getByText(/How We Can Help/i)).toBeInTheDocument()
+    const askLinks = screen.getAllByRole('link', { name: /Ask a Question/i })
+    expect(askLinks.length).toBeGreaterThanOrEqual(1)
+    expect(askLinks[0]).toHaveAttribute('href', '/ask')
   })
 
-  it('renders browse schemes feature card', () => {
-    render(<Home />)
+  it('renders the profile wizard section', () => {
+    renderWithProvider(<Home />)
 
-    expect(screen.getByText(/Explore Karnataka government welfare schemes/i)).toBeInTheDocument()
+    // Wizard shows first question (gender)
+    expect(screen.getByText(/What is your gender/i)).toBeInTheDocument()
   })
 
-  it('renders debug rejections feature card', () => {
-    render(<Home />)
+  it('renders quick actions feature cards', () => {
+    renderWithProvider(<Home />)
 
-    expect(screen.getByText(/Step through common rejection reasons/i)).toBeInTheDocument()
+    expect(screen.getByText(/Quick Actions/i)).toBeInTheDocument()
   })
 
-  it('renders ask questions feature card', () => {
-    render(<Home />)
+  it('renders important notice / disclaimer', () => {
+    renderWithProvider(<Home />)
 
-    expect(screen.getByText(/Get answers to your questions/i)).toBeInTheDocument()
-  })
-
-  it('renders important notice section', () => {
-    render(<Home />)
-
-    expect(screen.getByText(/Important Notice/i)).toBeInTheDocument()
-    expect(screen.getByText(/This is NOT a government website/i)).toBeInTheDocument()
-  })
-
-  it('links to official government portal in notice', () => {
-    render(<Home />)
-
-    const officialLink = screen.getByRole('link', { name: /official Karnataka government portals/i })
-    expect(officialLink).toHaveAttribute('href', 'https://sevasindhu.karnataka.gov.in')
+    expect(screen.getByText(/NOT an official government website/i)).toBeInTheDocument()
   })
 
   it('renders footer with navigation links', () => {
-    render(<Home />)
+    renderWithProvider(<Home />)
 
     expect(screen.getByRole('link', { name: /^Schemes$/i })).toHaveAttribute('href', '/schemes')
+    expect(screen.getByRole('link', { name: /^Explore$/i })).toHaveAttribute('href', '/explore')
     expect(screen.getByRole('link', { name: /^Ask$/i })).toHaveAttribute('href', '/ask')
-    expect(screen.getByRole('link', { name: /^Terms$/i })).toHaveAttribute('href', '/terms')
-    expect(screen.getByRole('link', { name: /^Privacy$/i })).toHaveAttribute('href', '/privacy')
   })
 })

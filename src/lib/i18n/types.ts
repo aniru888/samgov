@@ -128,6 +128,40 @@ export interface TranslationKeys {
   exploreVerified: string
   exploreAutoImported: string
   exploreCheckEligibility: string
+
+  // Screener / Profile Wizard
+  screenerTitle: string
+  screenerSubtitle: string
+  screenerFindSchemes: string
+  screenerGenderQuestion: string
+  screenerGenderMale: string
+  screenerGenderFemale: string
+  screenerGenderOther: string
+  screenerAgeQuestion: string
+  screenerAgeUnder18: string
+  screenerAge18to35: string
+  screenerAge36to60: string
+  screenerAgeOver60: string
+  screenerSituationQuestion: string
+  screenerSituationFarmer: string
+  screenerSituationStudent: string
+  screenerSituationWorker: string
+  screenerSituationEntrepreneur: string
+  screenerSituationUnemployed: string
+  screenerSituationOther: string
+  screenerCategoryQuestion: string
+  screenerCategoryGeneral: string
+  screenerCategoryOBC: string
+  screenerCategorySC: string
+  screenerCategoryST: string
+  screenerCategoryMinority: string
+  screenerResultsTitle: string
+  screenerLikely: string
+  screenerPossible: string
+  screenerCheck: string
+  screenerNoResults: string
+  screenerStartOver: string
+  screenerSchemesWith: string
 }
 
 export type TranslationKey = keyof TranslationKeys
