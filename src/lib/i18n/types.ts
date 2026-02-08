@@ -162,6 +162,18 @@ export interface TranslationKeys {
   screenerNoResults: string
   screenerStartOver: string
   screenerSchemesWith: string
+
+  // Document Preparation Guides
+  docGuideHowToGet: string
+  docGuideHide: string
+  docGuideDocumentsNeeded: string
+  docGuideGuidesAvailable: string
+  docGuideWhere: string
+  docGuideHow: string
+  docGuideTime: string
+  docGuideCost: string
+  docGuideOnline: string
+  docGuideTip: string
 }
 
 export type TranslationKey = keyof TranslationKeys

@@ -161,6 +161,18 @@ export const translations: Record<"en" | "kn", TranslationKeys> = {
     screenerNoResults: "No matching schemes found for your profile. Try browsing all schemes.",
     screenerStartOver: "Change Answers",
     screenerSchemesWith: "{count} schemes found",
+
+    // Document Preparation Guides
+    docGuideHowToGet: "How to get",
+    docGuideHide: "Hide guide",
+    docGuideDocumentsNeeded: "Documents You Will Need",
+    docGuideGuidesAvailable: "{count} guides available",
+    docGuideWhere: "Where",
+    docGuideHow: "How to apply",
+    docGuideTime: "Time",
+    docGuideCost: "Cost",
+    docGuideOnline: "Online",
+    docGuideTip: "Tip",
   },
   kn: {
     // Common - Kannada translations (verified placeholders, need native review)
@@ -322,6 +334,18 @@ export const translations: Record<"en" | "kn", TranslationKeys> = {
     screenerNoResults: "ನಿಮ್ಮ ಪ್ರೊಫೈಲ್‌ಗೆ ಹೊಂದಾಣಿಕೆ ಯೋಜನೆಗಳು ಕಂಡುಬಂದಿಲ್ಲ. ಎಲ್ಲಾ ಯೋಜನೆಗಳನ್ನು ಬ್ರೌಸ್ ಮಾಡಿ.",
     screenerStartOver: "ಉತ್ತರಗಳನ್ನು ಬದಲಿಸಿ",
     screenerSchemesWith: "{count} ಯೋಜನೆಗಳು ಕಂಡುಬಂದಿವೆ",
+
+    // Document Preparation Guides
+    docGuideHowToGet: "ಪಡೆಯುವ ವಿಧಾನ",
+    docGuideHide: "ಮಾರ್ಗದರ್ಶಿ ಮರೆಮಾಡಿ",
+    docGuideDocumentsNeeded: "ನಿಮಗೆ ಬೇಕಾದ ದಾಖಲೆಗಳು",
+    docGuideGuidesAvailable: "{count} ಮಾರ್ಗದರ್ಶಿಗಳು ಲಭ್ಯ",
+    docGuideWhere: "ಎಲ್ಲಿ",
+    docGuideHow: "ಹೇಗೆ ಅರ್ಜಿ ಸಲ್ಲಿಸಬೇಕು",
+    docGuideTime: "ಸಮಯ",
+    docGuideCost: "ವೆಚ್ಚ",
+    docGuideOnline: "ಆನ್‌ಲೈನ್",
+    docGuideTip: "ಸಲಹೆ",
   },
 }
 

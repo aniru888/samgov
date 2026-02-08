@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useTranslation } from "@/lib/i18n"
 import { disclaimer } from "@/lib/design-system"
 import type { ResultNode, ResultStatus } from "@/lib/rules-engine"
+import { DocumentList } from "@/components/documents/document-guide"
 
 interface ResultStepProps {
   result: ResultNode
@@ -176,7 +177,7 @@ export function ResultStep({
         </Card>
       )}
 
-      {/* Required Documents - from tree node or scheme DB */}
+      {/* Required Documents with Preparation Guides */}
       {(() => {
         const docs = result.documents && result.documents.length > 0
           ? result.documents
@@ -184,20 +185,8 @@ export function ResultStep({
         if (!docs || docs.length === 0) return null;
         return (
           <Card className="mb-4">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">
-                {language === "kn" ? "ಅಗತ್ಯ ದಾಖಲೆಗಳು" : "Documents You Will Need"}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="space-y-1.5">
-                {docs.map((doc, index) => (
-                  <li key={index} className="text-sm text-muted-foreground flex items-start gap-2">
-                    <span className="text-teal-500 mt-0.5 shrink-0">&#10003;</span>
-                    {doc}
-                  </li>
-                ))}
-              </ul>
+            <CardContent className="pt-4">
+              <DocumentList documents={docs} />
             </CardContent>
           </Card>
         );

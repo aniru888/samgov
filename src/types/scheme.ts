@@ -33,4 +33,6 @@ export interface Scheme {
   scheme_level: "state" | "central" | "both" | null;
   is_active: boolean;
   data_source: string | null;
+  // Documents (from migration 010)
+  required_documents: string[] | null;
 }

@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { useTranslation } from "@/lib/i18n"
 import type { Scheme } from "@/types/scheme"
+import { DocumentList } from "@/components/documents/document-guide"
 
 interface SchemeDetailClientProps {
   scheme: Scheme
@@ -99,6 +100,13 @@ export function SchemeDetailClient({ scheme, hasDecisionTree = false }: SchemeDe
                 {t("disclaimer")}
               </p>
             </div>
+          </section>
+        )}
+
+        {/* Required Documents with Preparation Guides */}
+        {scheme.required_documents && scheme.required_documents.length > 0 && (
+          <section className="bg-white rounded-lg shadow p-6 mb-6">
+            <DocumentList documents={scheme.required_documents} />
           </section>
         )}
 
