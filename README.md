@@ -83,7 +83,7 @@ cp .env.example .env.local
 # Run development server
 npm run dev
 
-# Run tests (313 tests across 27 files)
+# Run tests (365 tests across 33 files)
 npx vitest run
 
 # Type check
