@@ -57,3 +57,6 @@ supabase/.temp
 # OS
 Thumbs.db
 nul
+
+# Presentation/design files (not code)
+*.pdf
