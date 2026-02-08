@@ -532,7 +532,14 @@ npx supabase init
 
 # Local development
 npx supabase start          # Start local Supabase
-npm run dev                 # Start Next.js dev server
+npm run dev                 # Start Next.js dev server (port 3000)
+
+# IMPORTANT: Dev server port policy
+# ALWAYS use port 3000. NEVER let Next.js auto-pick another port.
+# If port 3000 is in use, kill the existing process first:
+#   powershell -Command "Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess -Force"
+# Then remove stale lock: del .next\dev\lock
+# Then start: npm run dev
 
 # Database
 npx supabase db push        # Apply migrations
@@ -551,6 +558,13 @@ npx supabase db push --db-url "postgres://..."  # Production migration
 ---
 
 ## Troubleshooting
+
+### Dev server port conflict (port 3000 in use)
+- **NEVER auto-pick a different port.** Always kill the existing process and restart on 3000.
+- Kill: `powershell -Command "Stop-Process -Id (Get-NetTCPConnection -LocalPort 3000).OwningProcess -Force"`
+- Remove stale lock: `del .next\dev\lock`
+- Then restart: `npm run dev`
+- If `taskkill` fails on Git Bash, use `powershell -Command "Stop-Process ..."` instead
 
 ### "Embedding dimension mismatch"
 - Ensure ALL embeddings use Cohere embed-multilingual-v3 (1024 dims)
