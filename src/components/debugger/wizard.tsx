@@ -30,6 +30,25 @@ export function Wizard({ schemeSlug, schemeName, className }: WizardProps) {
     state,
   } = useWizard(tree, schemeId, treeId)
 
+  // Record anonymous completion for analytics (zero PII)
+  React.useEffect(() => {
+    if (isComplete && result && schemeId && treeId) {
+      fetch("/api/completions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          schemeId,
+          treeId,
+          resultStatus: result.status,
+          terminalNodeId: state?.currentNodeId || "",
+          answerPath: state?.answers.map(a => ({ nodeId: a.nodeId, optionLabel: a.optionLabel })) || [],
+          answerCount: state?.answers.length || 0,
+          language,
+        }),
+      }).catch(() => {}) // Analytics should never break UX
+    }
+  }, [isComplete, result, schemeId, treeId, state?.currentNodeId, state?.answers, language])
+
   // Loading state
   if (loading) {
     return (
