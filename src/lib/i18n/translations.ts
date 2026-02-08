@@ -173,6 +173,20 @@ export const translations: Record<"en" | "kn", TranslationKeys> = {
     docGuideCost: "Cost",
     docGuideOnline: "Online",
     docGuideTip: "Tip",
+
+    // CSC Operator Mode
+    cscTitle: "CSC Operator Mode",
+    cscSubtitle: "Screen citizens for eligible schemes",
+    cscNextCitizen: "Next Citizen",
+    cscCitizensHelped: "Citizens helped today",
+    cscSchemesFound: "Schemes matched",
+    cscPrintAll: "Print All Results",
+    cscResetSession: "Reset Today's Count",
+    cscProfileSummary: "Profile",
+    cscNewSession: "New day — counter reset",
+    cscOperatorNote: "For CSC operators only",
+    cscPrintFooterStamp: "CSC Operator Signature",
+    cscResultsFor: "Results for citizen",
   },
   kn: {
     // Common - Kannada translations (verified placeholders, need native review)
@@ -346,6 +360,20 @@ export const translations: Record<"en" | "kn", TranslationKeys> = {
     docGuideCost: "ವೆಚ್ಚ",
     docGuideOnline: "ಆನ್‌ಲೈನ್",
     docGuideTip: "ಸಲಹೆ",
+
+    // CSC Operator Mode
+    cscTitle: "CSC ಆಪರೇಟರ್ ಮೋಡ್",
+    cscSubtitle: "ನಾಗರಿಕರಿಗೆ ಅರ್ಹ ಯೋಜನೆಗಳನ್ನು ಪರಿಶೀಲಿಸಿ",
+    cscNextCitizen: "ಮುಂದಿನ ನಾಗರಿಕ",
+    cscCitizensHelped: "ಇಂದು ಸಹಾಯ ಮಾಡಿದ ನಾಗರಿಕರು",
+    cscSchemesFound: "ಹೊಂದಾಣಿಕೆಯಾದ ಯೋಜನೆಗಳು",
+    cscPrintAll: "ಎಲ್ಲಾ ಫಲಿತಾಂಶಗಳನ್ನು ಮುದ್ರಿಸಿ",
+    cscResetSession: "ಇಂದಿನ ಎಣಿಕೆ ಮರುಹೊಂದಿಸಿ",
+    cscProfileSummary: "ಪ್ರೊಫೈಲ್",
+    cscNewSession: "ಹೊಸ ದಿನ — ಎಣಿಕೆ ಮರುಹೊಂದಿಸಲಾಗಿದೆ",
+    cscOperatorNote: "CSC ಆಪರೇಟರ್‌ಗಳಿಗೆ ಮಾತ್ರ",
+    cscPrintFooterStamp: "CSC ಆಪರೇಟರ್ ಸಹಿ",
+    cscResultsFor: "ನಾಗರಿಕರಿಗೆ ಫಲಿತಾಂಶಗಳು",
   },
 }
 

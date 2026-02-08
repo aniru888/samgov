@@ -307,4 +307,12 @@
   .mb-4, .mb-6, section {
     page-break-inside: avoid;
   }
+
+  /* CSC print: signature/stamp area */
+  .print-csc-stamp {
+    display: block !important;
+    border-top: 1px solid #999;
+    margin-top: 20mm;
+    padding-top: 5mm;
+  }
 }

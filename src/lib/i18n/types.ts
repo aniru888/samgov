@@ -174,6 +174,20 @@ export interface TranslationKeys {
   docGuideCost: string
   docGuideOnline: string
   docGuideTip: string
+
+  // CSC Operator Mode
+  cscTitle: string
+  cscSubtitle: string
+  cscNextCitizen: string
+  cscCitizensHelped: string
+  cscSchemesFound: string
+  cscPrintAll: string
+  cscResetSession: string
+  cscProfileSummary: string
+  cscNewSession: string
+  cscOperatorNote: string
+  cscPrintFooterStamp: string
+  cscResultsFor: string
 }
 
 export type TranslationKey = keyof TranslationKeys
